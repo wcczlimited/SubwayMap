@@ -1,7 +1,12 @@
 package com.sudalv.subway;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PointF;
+import android.opengl.GLUtils;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,6 +20,7 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -32,10 +38,16 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends Activity {
+import javax.microedition.khronos.opengles.GL10;
+
+public class MainActivity extends Activity implements BaiduMap.OnMapDrawFrameCallback {
     private SlidingMenu slidingMenu;
     // 定位相关
     private MapView mMapView;
@@ -48,6 +60,11 @@ public class MainActivity extends Activity {
     private Button mapModeButton;
     private boolean isFirstLoc = true;// 是否首次定位
 
+    private List<LineItem> lines;
+
+    //openGL
+    private float[] vertexs;
+    private FloatBuffer vertexBuffer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SDKInitializer.initialize(getApplicationContext());//这句话一定要放在最开始
@@ -56,7 +73,60 @@ public class MainActivity extends Activity {
         initSlidingMenu();
         initBaiduMap();
         initSubway();
+        mBaiduMap.setOnMapDrawFrameCallback(this);
+    }
 
+    public void onMapDrawFrame(GL10 gl, MapStatus drawingMapStatus) {
+        for(LineItem item : lines){
+            if (mBaiduMap.getProjection() != null) {
+                calPolylinePoint(drawingMapStatus,item.getPos());
+                drawPolyline(gl, Color.argb(255, 0, 0, 0), vertexBuffer, 10, item.getPos().size(), drawingMapStatus);
+            }
+        }
+    }
+
+    public void calPolylinePoint(MapStatus mspStatus, List<LatLng> points) {
+        PointF[] polyPoints = new PointF[points.size()];
+        vertexs = new float[3 * points.size()];
+        int i = 0;
+        for (LatLng xy :points) {
+            polyPoints[i] = mBaiduMap.getProjection().toOpenGLLocation(xy,
+                    mspStatus);
+            vertexs[i * 3] = polyPoints[i].x;
+            vertexs[i * 3 + 1] = polyPoints[i].y;
+            vertexs[i * 3 + 2] = 0.0f;
+            i++;
+        }
+        vertexBuffer = makeFloatBuffer(vertexs);
+    }
+
+    private FloatBuffer makeFloatBuffer(float[] fs) {
+        ByteBuffer bb = ByteBuffer.allocateDirect(fs.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        FloatBuffer fb = bb.asFloatBuffer();
+        fb.put(fs);
+        fb.position(0);
+        return fb;
+    }
+
+    private void drawPolyline(GL10 gl, int color, FloatBuffer lineVertexBuffer,
+                              float lineWidth, int pointSize, MapStatus drawingMapStatus) {
+
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        float colorA = Color.alpha(color) / 255f;
+        float colorR = Color.red(color) / 255f;
+        float colorG = Color.green(color) / 255f;
+        float colorB = Color.blue(color) / 255f;
+
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineVertexBuffer);
+        gl.glColor4f(colorR, colorG, colorB, colorA);
+        gl.glLineWidth(lineWidth);
+        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pointSize);
+
+        gl.glDisable(GL10.GL_BLEND);
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
     private void initSubway(){
@@ -67,40 +137,42 @@ public class MainActivity extends Activity {
             String json = new String(buffer, "utf-8");
             JSONObject obj = new JSONObject(json);
             JSONArray arr = obj.getJSONArray("stations");
-
             for(int i=0; i<arr.length();i++){
                 JSONObject temp = arr.getJSONObject(i);
                 String name = temp.getString("name");
                 double locX = temp.getDouble("locX");
                 double locY = temp.getDouble("locY");
-                String line = temp.getString("line");
+                int line = temp.getInt("line");
                 int id = temp.getInt("id");
-                //points.add(new LatLng(locY,locX));
             }
-
             input.close();
             input = getResources().openRawResource(R.raw.lines);
             buffer = new byte[input.available()];
             input.read(buffer);
             json = new String(buffer, "utf-8");
             obj = new JSONObject(json);
-            arr = obj.getJSONArray("lines");
-            List<LatLng> points = new ArrayList<LatLng>();
-            for(int i=0; i<arr.length();i++){
-                JSONArray temparr = arr.getJSONObject(i).getJSONArray("pos");
-                for(int j=0; j<temparr.length();j++){
-                    JSONObject temp = temparr.getJSONObject(j);
-                    double locX = temp.getDouble("locX");
-                    double locY = temp.getDouble("locY");
-                    points.add(new LatLng(locY,locX));
-                }
-            }
-            //构造对象
-            OverlayOptions ooPolyline = new PolylineOptions().width(8).color(0xAAFF0000).points(points);
-            //添加到地图
-            mBaiduMap.addOverlay(ooPolyline);
+            lines = new ArrayList<LineItem>();
+            addItemToList("line1", obj);
+            addItemToList("line5",obj);
+            addItemToList("line8",obj);
         }catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    private void addItemToList(String lineName, JSONObject obj) throws Exception{
+        JSONArray arr = obj.getJSONArray(lineName);
+        for(int i=0; i<arr.length();i++){
+            JSONObject tempObject = arr.getJSONObject(i);
+            LineItem tempItem = new LineItem(tempObject.getString("from"),tempObject.getString("to"));
+            JSONArray temparr = tempObject.getJSONArray("pos");
+            for(int j=0; j<temparr.length();j++){
+                JSONObject temp = temparr.getJSONObject(j);
+                double locX = temp.getDouble("locX");
+                double locY = temp.getDouble("locY");
+                tempItem.addPos(locX,locY);
+            }
+            lines.add(tempItem);
         }
     }
 
