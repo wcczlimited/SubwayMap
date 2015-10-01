@@ -156,6 +156,8 @@ public class MainActivity extends Activity implements BaiduMap.OnMapDrawFrameCal
             addItemToList("line5",obj);
             addItemToList("line8",obj);
             addItemToList("line4",obj);
+            addItemToList("line3",obj);
+            addItemToList("line2",obj);
         }catch(Exception e){
             e.printStackTrace();
         }
