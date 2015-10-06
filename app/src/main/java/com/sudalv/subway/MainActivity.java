@@ -1,12 +1,8 @@
 package com.sudalv.subway;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.opengl.GLUtils;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,30 +14,20 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.map.PolylineOptions;
-import com.baidu.mapapi.map.Stroke;
 import com.baidu.mapapi.model.LatLng;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +49,6 @@ public class MainActivity extends Activity implements BaiduMap.OnMapDrawFrameCal
     private List<LineItem> lines;
 
     //openGL
-    private float[] vertexs;
     private FloatBuffer vertexBuffer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,60 +59,27 @@ public class MainActivity extends Activity implements BaiduMap.OnMapDrawFrameCal
         initBaiduMap();
         initSubway();
         mBaiduMap.setOnMapDrawFrameCallback(this);
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowHomeEnabled(false);
+        getActionBar().setHomeAsUpIndicator(R.drawable.ic_drawer_home);
     }
 
     public void onMapDrawFrame(GL10 gl, MapStatus drawingMapStatus) {
+        int index = 0;
         for(LineItem item : lines){
             if (mBaiduMap.getProjection() != null) {
-                calPolylinePoint(drawingMapStatus,item.getPos());
-                drawPolyline(gl, Color.argb(255, 0, 0, 0), vertexBuffer, 10, item.getPos().size(), drawingMapStatus);
+                vertexBuffer = GLUtil.calPolylinePoint( mBaiduMap, drawingMapStatus, item.getPos());
+                if(index %3 ==2)
+                    GLUtil.drawPolyline(gl, Color.argb(255, 207, 136, 49), vertexBuffer, 10, item.getPos().size(), drawingMapStatus);
+                else if(index % 3 ==1)
+                    GLUtil.drawPolyline(gl, Color.argb(255, 180, 0, 0), vertexBuffer, 10, item.getPos().size(), drawingMapStatus);
+                else
+                    GLUtil.drawPolyline(gl, Color.argb(255, 152, 191, 85), vertexBuffer, 10, item.getPos().size(), drawingMapStatus);
+                index++;
             }
         }
     }
 
-    public void calPolylinePoint(MapStatus mspStatus, List<LatLng> points) {
-        PointF[] polyPoints = new PointF[points.size()];
-        vertexs = new float[3 * points.size()];
-        int i = 0;
-        for (LatLng xy :points) {
-            polyPoints[i] = mBaiduMap.getProjection().toOpenGLLocation(xy,
-                    mspStatus);
-            vertexs[i * 3] = polyPoints[i].x;
-            vertexs[i * 3 + 1] = polyPoints[i].y;
-            vertexs[i * 3 + 2] = 0.0f;
-            i++;
-        }
-        vertexBuffer = makeFloatBuffer(vertexs);
-    }
-
-    private FloatBuffer makeFloatBuffer(float[] fs) {
-        ByteBuffer bb = ByteBuffer.allocateDirect(fs.length * 4);
-        bb.order(ByteOrder.nativeOrder());
-        FloatBuffer fb = bb.asFloatBuffer();
-        fb.put(fs);
-        fb.position(0);
-        return fb;
-    }
-
-    private void drawPolyline(GL10 gl, int color, FloatBuffer lineVertexBuffer,
-                              float lineWidth, int pointSize, MapStatus drawingMapStatus) {
-
-        gl.glEnable(GL10.GL_BLEND);
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-        float colorA = Color.alpha(color) / 255f;
-        float colorR = Color.red(color) / 255f;
-        float colorG = Color.green(color) / 255f;
-        float colorB = Color.blue(color) / 255f;
-
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineVertexBuffer);
-        gl.glColor4f(colorR, colorG, colorB, colorA);
-        gl.glLineWidth(lineWidth);
-        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pointSize);
-
-        gl.glDisable(GL10.GL_BLEND);
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-    }
 
     private void initSubway(){
         try {

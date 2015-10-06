@@ -4,5 +4,16 @@
     <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
-
+    <style name="CustomActionBarTheme" parent="@android:style/Theme.Holo.Light" type="text/css">
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar" type="text/css">
+        <item name="android:background">#72CBB1</item>
+        <item name="android:titleTextStyle">@style/MyActionBar_titleStyle</item>
+    </style>
+    <style name="MyActionBar_titleStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:paddingLeft">105sp</item>
+    </style>
 </resources>
