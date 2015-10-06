@@ -22,9 +22,6 @@
             android:layout_marginRight="25dp"
             android:layout_marginTop="10dip" />
     </FrameLayout>
-    <FrameLayout android:id="@+id/line_container" android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </FrameLayout>
 
     <!-- android:layout_gravity="start" tells DrawerLayout to treat
          this as a sliding drawer on the left side for left-to-right
@@ -35,7 +32,7 @@
          the container. -->
     <fragment android:id="@+id/navigation_drawer"
         android:layout_width="@dimen/navigation_drawer_width" android:layout_height="match_parent"
-        android:layout_gravity="start" android:name="com.sudalv.subway.NavigationDrawerFragment"
+        android:layout_gravity="start" android:name="com.sudalv.subway.fragment.NavigationDrawerFragment"
         tools:layout="@layout/fragment_navigation_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

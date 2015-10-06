@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_gravity="left|top"
+    android:orientation="vertical" tools:context="com.sudalv.subway.fragment.MapFragment"
+    android:background="#bdc6c3">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#faffffff">
+
+        <Button
+            android:layout_width="73dp"
+            android:layout_height="match_parent"
+            android:text="@string/line_start"
+            android:id="@+id/line_start"
+            android:background="@drawable/actionbar_background"
+            android:layout_gravity="top|left|bottom|right"
+            android:textColor="#ffffff" />
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/line_start_text"
+            android:layout_weight="1"
+            android:editable="true"
+            android:inputType="text"
+            android:background="@drawable/bg_editer" />
+
+    </LinearLayout>
+</LinearLayout>

@@ -1,7 +1,9 @@
 package com.sudalv.subway;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.opengl.GLUtils;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
@@ -10,6 +12,7 @@ import com.baidu.mapapi.model.LatLng;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.nio.ShortBuffer;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -18,6 +21,7 @@ import javax.microedition.khronos.opengles.GL10;
  * Created by SunWe on 2015/10/6.
  */
 public class GLUtil {
+    private static int textureId = -1;
     public static void drawPolyline(GL10 gl, int color, FloatBuffer lineVertexBuffer,
                                       float lineWidth, int pointSize, MapStatus drawingMapStatus) {
 

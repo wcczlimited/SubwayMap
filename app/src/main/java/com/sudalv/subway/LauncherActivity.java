@@ -1,21 +1,16 @@
 package com.sudalv.subway;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
-import android.app.Fragment;
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.view.View.OnClickListener;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -23,22 +18,27 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.sudalv.subway.fragment.MapFragment;
+import com.sudalv.subway.fragment.NavigationDrawerFragment;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -58,7 +58,7 @@ public class LauncherActivity extends Activity
     private MapView mMapView;
     private BaiduMap mBaiduMap;
     private LocationClient mLocClient;
-    public MyLocationListenner myListener = new MyLocationListenner();
+    private MyLocationListenner myListener = new MyLocationListenner();
     private BaiduMapCallBack myBaiduMapCallBack= new BaiduMapCallBack();
     private MyLocationConfiguration.LocationMode mCurrentMode;
 
@@ -67,9 +67,12 @@ public class LauncherActivity extends Activity
     private boolean isFirstLoc = true;// 是否首次定位
 
     private List<LineItem> lines;
+    private List<StationItem> stations;
 
     //openGL
     private FloatBuffer vertexBuffer;
+    private List<LatLng> stationList;
+    private Map<Marker,String> stationOverlayMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SDKInitializer.initialize(getApplicationContext());//这句话一定要放在最开始
@@ -84,6 +87,10 @@ public class LauncherActivity extends Activity
             mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
             initBaiduMap();
             lines = BaiduMapUtils.initSubway(getResources().openRawResource(R.raw.lines));
+            stations = BaiduMapUtils.initStations(getResources().openRawResource(R.raw.subway));
+            stationList = BaiduMapUtils.getStationPosList();
+            stationOverlayMap = new HashMap<>();
+            drawStations();
             mBaiduMap.setOnMapDrawFrameCallback(myBaiduMapCallBack);
         }catch (Exception e){
             e.printStackTrace();
@@ -100,9 +107,11 @@ public class LauncherActivity extends Activity
                 switch (mCurrentMode) {
                     case NORMAL:
                         mapModeButton.setText("流量");
+                        mCurrentMode = LocationMode.FOLLOWING;
                         break;
                     case FOLLOWING:
                         mapModeButton.setText("普通");
+                        mCurrentMode = LocationMode.NORMAL;
                         break;
                 }
             }
@@ -112,6 +121,9 @@ public class LauncherActivity extends Activity
         // 地图初始化
         mMapView = (MapView) findViewById(R.id.bmapView);
         mBaiduMap = mMapView.getMap();
+        mBaiduMap.setOnMapStatusChangeListener(listener);
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(new MapStatus.Builder().zoom(15).build()));
+        mBaiduMap.setOnMarkerClickListener(Markerlistener);
         // 开启定位图层
         mBaiduMap.setMyLocationEnabled(true);
         // 定位初始化
@@ -125,27 +137,40 @@ public class LauncherActivity extends Activity
         mLocClient.start();
     }
 
+    private void drawStations(){
+        for (StationItem item : stations) {
+            //定义Maker坐标点
+            LatLng point = item.getmPos();
+            //构建Marker图标
+            BitmapDescriptor bitmap = BitmapDescriptorFactory
+                    .fromResource(R.drawable.icon_track);
+            //构建MarkerOption，用于在地图上添加Marker
+            OverlayOptions option = new MarkerOptions()
+                    .position(point)
+                    .icon(bitmap);
+            //在地图上添加Marker，并显示
+            Marker temp= (Marker)mBaiduMap.addOverlay(option);
+            stationOverlayMap.put(temp,item.getmName());
+        }
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(String title) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
-        switch (title){
-            case "出行":
-                fragmentManager.beginTransaction()
-                        .replace(R.id.line_container, PlaceholderFragment.newInstance(title))
-                        .commit();
-                break;
-            case "实时":
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(title))
-                        .commit();
-                break;
-            default:
-                fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(title))
-                        .commit();
-                break;
+        System.out.println(title);
+        if(title.equals("实时")){
+            int num = getFragmentManager().getBackStackEntryCount();
+            String numString = "++++++++++++++++++++++++++++++++++Fragment回退栈数量：" + num;
+            for (int i = 0; i < num; i++) {
+                FragmentManager.BackStackEntry backstatck = getFragmentManager().getBackStackEntryAt(i);
+            }
+            return;
         }
+
+        fragmentManager.beginTransaction()
+                .add(R.id.container, MapFragment.newInstance(title))
+                .commit();
     }
 
     public void onSectionAttached(String title) {
@@ -186,65 +211,98 @@ public class LauncherActivity extends Activity
         actionBar.setTitle(mTitle);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_TITLE = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(String title) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putString(ARG_SECTION_TITLE, title);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_launcher, container, false);
-            return rootView;
-        }
-
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((LauncherActivity) activity).onSectionAttached(
-                    getArguments().getString(ARG_SECTION_TITLE));
-        }
-    }
-
-
     public class BaiduMapCallBack implements BaiduMap.OnMapDrawFrameCallback {
         @Override
         public void onMapDrawFrame(GL10 gl10, MapStatus mapStatus) {
-            int index = 0;
-            for(LineItem item : lines){
-                if (mBaiduMap.getProjection() != null) {
-                    vertexBuffer = GLUtil.calPolylinePoint( mBaiduMap, mapStatus, item.getPos());
-                    if(index %3 ==2)
-                        GLUtil.drawPolyline(gl10, Color.argb(255, 207, 136, 49), vertexBuffer, 10, item.getPos().size(), mapStatus);
-                    else if(index % 3 ==1)
-                        GLUtil.drawPolyline(gl10, Color.argb(255, 180, 0, 0), vertexBuffer, 10, item.getPos().size(), mapStatus);
-                    else
-                        GLUtil.drawPolyline(gl10, Color.argb(255, 152, 191, 85), vertexBuffer, 10, item.getPos().size(), mapStatus);
-                    index++;
+            int lineWidth = 10;
+            switch ((int)mapStatus.zoom){
+                case 11:
+                    lineWidth = 8;
+                    break;
+                case 12:
+                    lineWidth = 10;
+                    break;
+                case 13:
+                    lineWidth = 12;
+                    break;
+                case 14:
+                    lineWidth = 15;
+                    break;
+                case 15:
+                    lineWidth = 17;
+                    break;
+                case 16:
+                    lineWidth = 19;
+                    break;
+                case 17:
+                    lineWidth = 22;
+                    break;
+                case 18:
+                    lineWidth = 24;
+                    break;
+            }
+            if(mapStatus.zoom >11) {
+                int index = 0;
+                for (LineItem item : lines) {
+                    if (mBaiduMap.getProjection() != null) {
+                        vertexBuffer = GLUtil.calPolylinePoint(mBaiduMap, mapStatus, item.getPos());
+                        if (index % 3 == 2)
+                            GLUtil.drawPolyline(gl10, Color.argb(255, 207, 136, 49), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
+                        else if (index % 3 == 1)
+                            GLUtil.drawPolyline(gl10, Color.argb(255, 180, 0, 0), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
+                        else
+                            GLUtil.drawPolyline(gl10, Color.argb(255, 152, 191, 85), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
+                        index++;
+                    }
                 }
             }
         }
     }
+
+    BaiduMap.OnMapStatusChangeListener listener = new BaiduMap.OnMapStatusChangeListener() {
+        /**
+         * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
+         * @param status 地图状态改变开始时的地图状态
+         */
+        public void onMapStatusChangeStart(MapStatus status){
+        }
+        /**
+         * 地图状态变化中
+         * @param status 当前地图状态
+         */
+        public void onMapStatusChange(MapStatus status){
+            if(status.zoom < 13){
+                if(!stationOverlayMap.isEmpty()) {
+                    for (Map.Entry<Marker,String> overlay : stationOverlayMap.entrySet()) {
+                        overlay.getKey().remove();
+                    }
+                    stationOverlayMap.clear();
+                }
+            }
+        }
+        /**
+         * 地图状态改变结束
+         * @param status 地图状态改变结束后的地图状态
+         */
+        public void onMapStatusChangeFinish(MapStatus status){
+            if(stationOverlayMap.isEmpty()) {
+                if (status.zoom >= 13) {
+                    drawStations();
+                }
+            }
+        }
+    };
+
+    BaiduMap.OnMarkerClickListener Markerlistener = new BaiduMap.OnMarkerClickListener() {
+        /**
+         * 地图 Marker 覆盖物点击事件监听函数
+         * @param marker 被点击的 marker
+         */
+        public boolean onMarkerClick(Marker marker){
+            System.out.println(stationOverlayMap.get(marker));
+            return false;
+        }
+    };
 
     /**
      * 定位SDK监听函数
@@ -273,6 +331,29 @@ public class LauncherActivity extends Activity
 
         public void onReceivePoi(BDLocation poiLocation) {
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // 退出时销毁定位
+        mLocClient.stop();
+        // 关闭定位图层
+        mBaiduMap.setMyLocationEnabled(false);
+        mMapView.onDestroy();
+        mMapView = null;
+        super.onDestroy();
+    }
+    @Override
+    protected void onResume() {
+        //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
+        mMapView.onResume();
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
+        mMapView.onPause();
+        super.onPause();
     }
 
 }
