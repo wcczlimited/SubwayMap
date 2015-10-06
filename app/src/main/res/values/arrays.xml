@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="item_title">
+        <item>实时</item>
+        <item>出行</item>
+        <item>周边</item>
+        <item>设置</item>
+    </string-array>
+</resources>

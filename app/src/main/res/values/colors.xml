@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="actionbar_background">#0077d9</drawable>
+    <drawable name="activated_background_color">#00a7ff</drawable>
+</resources>
