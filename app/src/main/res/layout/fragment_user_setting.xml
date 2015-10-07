@@ -92,4 +92,23 @@
             bootstrap:bb_roundedCorners="true"
             android:layout_weight="1" />
     </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal">
+        <com.beardedhen.androidbootstrap.BootstrapButton
+            android:id="@+id/user_btn_confirm"
+            android:layout_marginLeft="20dip"
+            android:layout_marginRight="20dip"
+            android:layout_marginBottom="20dip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="确认"
+            android:textStyle="bold"
+            bootstrap:bb_type="success"
+            android:layout_gravity="bottom"
+            bootstrap:bb_roundedCorners="true"
+            />
+    </FrameLayout>
 </LinearLayout>

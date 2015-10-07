@@ -23,9 +23,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sudalv.subway.DrawerListAdapter;
+import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.listitem.DrawerListItem;
 import com.sudalv.subway.R;
 
@@ -64,6 +66,7 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+    private View headerView;
 
     private int mCurrentSelectedPosition = 1;
     private boolean mFromSavedInstanceState;
@@ -101,12 +104,15 @@ public class NavigationDrawerFragment extends Fragment {
                              Bundle savedInstanceState) {
         try {
             mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
-            View headerView = inflater.inflate(R.layout.list_header, null);
+            headerView = inflater.inflate(R.layout.list_header, null);
             File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
             if(face.exists()) {
                 ImageView user = (ImageView) headerView.findViewById(R.id.item_icon);
                 user.setImageURI(Uri.fromFile(face));
             }
+            TextView username = (TextView)headerView.findViewById(R.id.item_username);
+            if(!LauncherActivity.user_name.equals(""))
+                username.setText(LauncherActivity.user_name);
             mDrawerListView.addHeaderView(headerView);
             mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -140,13 +146,28 @@ public class NavigationDrawerFragment extends Fragment {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
 
+    public void changeUserHeader(){
+        System.out.println("change");
+        mDrawerListView.removeHeaderView(headerView);
+        headerView = getActivity().getLayoutInflater().inflate(R.layout.list_header, null);
+        File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
+        if(face.exists()) {
+            ImageView user = (ImageView) headerView.findViewById(R.id.item_icon);
+            user.setImageURI(Uri.fromFile(face));
+        }
+        TextView username = (TextView)headerView.findViewById(R.id.item_username);
+        if(!LauncherActivity.user_name.equals(""))
+            username.setText(LauncherActivity.user_name);
+        mDrawerListView.addHeaderView(headerView);
+    }
+
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
      *
      * @param fragmentId   The android:id of this fragment in its activity's layout.
      * @param drawerLayout The DrawerLayout containing this fragment's UI.
      */
-    public void setUp(int fragmentId, DrawerLayout drawerLayout) {
+    public void setUp(int fragmentId, final DrawerLayout drawerLayout) {
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
 
@@ -185,7 +206,6 @@ public class NavigationDrawerFragment extends Fragment {
                 if (!isAdded()) {
                     return;
                 }
-
                 if (!mUserLearnedDrawer) {
                     // The user manually opened the drawer; store this flag to prevent auto-showing
                     // the navigation drawer automatically in the future.

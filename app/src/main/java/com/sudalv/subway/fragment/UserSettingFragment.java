@@ -33,7 +33,7 @@ public class UserSettingFragment extends Fragment {
 
     /*UI*/
     private BootstrapEditText usernameText;
-    private BootstrapButton btn_male, btn_female;
+    private BootstrapButton btn_male, btn_female, btn_confirm;
 
     private OnFragmentInteractionListener mListener;
     private View view;
@@ -77,13 +77,21 @@ public class UserSettingFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user_setting, container, false);
         usernameText = (BootstrapEditText)view.findViewById(R.id.username);
+        usernameText.setText(mUsername);
         btn_female = (BootstrapButton)view.findViewById(R.id.user_btn_female);
         btn_male = (BootstrapButton)view.findViewById(R.id.user_btn_male);
+        btn_confirm = (BootstrapButton)view.findViewById(R.id.user_btn_confirm);
+        if(mUserSex==0){
+            btn_female.setEnabled(false);
+        }else{
+            btn_male.setEnabled(false);
+        }
         btn_female.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btn_female.setEnabled(false);
                 btn_male.setEnabled(true);
+                mUserSex = 0;
             }
         });
         btn_male.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +99,16 @@ public class UserSettingFragment extends Fragment {
             public void onClick(View v) {
                 btn_male.setEnabled(false);
                 btn_female.setEnabled(true);
+                mUserSex = 1;
+            }
+        });
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LauncherActivity.user_name = usernameText.getText().toString();
+                LauncherActivity.user_sex = mUserSex;
+                ((LauncherActivity) getActivity()).changeUserHeader();
+                getFragmentManager().popBackStack();
             }
         });
         return view;

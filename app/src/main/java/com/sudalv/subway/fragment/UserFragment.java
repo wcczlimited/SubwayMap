@@ -99,11 +99,11 @@ public class UserFragment extends Fragment {
                 FragmentTransaction ft = fragmentManager.beginTransaction();
                 Fragment currentFragment = fragmentManager.findFragmentByTag("用户设置");
                 ft.addToBackStack(mTitle);
-                if(currentFragment == null) {
-                    currentFragment = UserSettingFragment.newInstance("用户设置",LauncherActivity.user_name,LauncherActivity.user_sex);
+                if (currentFragment == null) {
+                    currentFragment = UserSettingFragment.newInstance("用户设置", LauncherActivity.user_name, LauncherActivity.user_sex);
                     ft.add(R.id.container, currentFragment, "用户设置");
                 }
-                if(currentFragment.isDetached()){
+                if (currentFragment.isDetached()) {
                     ft.attach(currentFragment);
                 }
                 ft.show(currentFragment);
@@ -131,6 +131,7 @@ public class UserFragment extends Fragment {
         if (resultCode ==  Activity.RESULT_OK) {
             File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
             faceImage.setImage(BitmapFactory.decodeFile(face.getPath()));
+            ((LauncherActivity) getActivity()).changeUserHeader();
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
         }

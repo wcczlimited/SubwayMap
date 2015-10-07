@@ -88,6 +88,10 @@ public class LauncherActivity extends Activity
         }
     }
 
+    public void changeUserHeader(){
+        mNavigationDrawerFragment.changeUserHeader();
+    }
+
     @Override
     public void onNavigationDrawerItemSelected(String title) {
         FragmentManager fragmentManager = getFragmentManager();
