@@ -5,14 +5,19 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -33,10 +38,13 @@ import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.fragment.LineFragment;
 import com.sudalv.subway.fragment.MapFragment;
 import com.sudalv.subway.fragment.NavigationDrawerFragment;
+import com.sudalv.subway.fragment.UserFragment;
 
+import java.io.File;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,6 +69,8 @@ public class LauncherActivity extends Activity
     private Fragment currentFragment, lastFragment;
     public static String user_select_start = "";
     public static String user_select_end = "";
+    public static String user_name = "";
+    public static int user_sex = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +100,8 @@ public class LauncherActivity extends Activity
             currentFragment = LineFragment.newInstance(title);
             ft.replace(R.id.container, currentFragment, title);
         }else if(title.equals("用户")){
-
+            currentFragment = UserFragment.newInstance(title);
+            ft.replace(R.id.container, currentFragment, title);
         }
         if(lastFragment != null) {
             ft.hide(lastFragment);
@@ -102,6 +113,15 @@ public class LauncherActivity extends Activity
         lastFragment = currentFragment;
         ft.commit();
         onSectionAttached(title);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void onSectionAttached(String title) {
@@ -149,6 +169,34 @@ public class LauncherActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent result) {
+        System.out.println("4545");
+        if (requestCode == Crop.REQUEST_PICK && resultCode == Activity.RESULT_OK) {
+            beginCrop(result.getData());
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            handleCrop(resultCode, result);
+        }
+    }
+
+    private void beginCrop(Uri source) {
+        System.out.println("333333333333");
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Crop.of(source, destination).asSquare().start(this);
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        System.out.println("2222222");
+        if (resultCode ==  Activity.RESULT_OK) {
+            ViewGroup viewGroup = (ViewGroup) findViewById(android.R.id.content);
+            View view = getLayoutInflater().inflate(R.layout.fragment_user,viewGroup, false);
+            ImageView faceImage = (ImageView)view.findViewById(R.id.user_face_image);
+            faceImage.setImageURI(Crop.getOutput(result));
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(this, Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
+import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -18,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +29,7 @@ import com.sudalv.subway.DrawerListAdapter;
 import com.sudalv.subway.listitem.DrawerListItem;
 import com.sudalv.subway.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,6 +102,11 @@ public class NavigationDrawerFragment extends Fragment {
         try {
             mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
             View headerView = inflater.inflate(R.layout.list_header, null);
+            File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
+            if(face.exists()) {
+                ImageView user = (ImageView) headerView.findViewById(R.id.item_icon);
+                user.setImageURI(Uri.fromFile(face));
+            }
             mDrawerListView.addHeaderView(headerView);
             mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

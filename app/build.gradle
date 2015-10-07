@@ -24,6 +24,8 @@ dependencies {
     compile 'com.google.zxing:core:3.1.0'
     compile 'me.dm7.barcodescanner:zxing:1.5'
     compile 'me.dm7.barcodescanner:zbar:1.5'
+    compile 'com.soundcloud.android:android-crop:1.0.1@aar'
+    compile 'com.beardedhen:androidbootstrap:+'
     compile files('libs/baidumapapi_v3_5_0.jar')
     compile files('libs/locSDK_5.2.jar')
 }
