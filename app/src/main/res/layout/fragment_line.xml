@@ -20,13 +20,112 @@
             android:textColor="#ffffff" />
 
         <EditText
+            style="?android:attr/textViewStyle"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:id="@+id/line_start_text"
             android:layout_weight="1"
             android:editable="true"
             android:inputType="text"
-            android:background="@drawable/bg_editer" />
+            android:background="@null"
+            android:paddingLeft="5dp"
+            android:textSize="18dp" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/div"></LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#faffffff">
+
+        <Button
+            android:layout_width="73dp"
+            android:layout_height="match_parent"
+            android:text="@string/line_end"
+            android:id="@+id/line_end"
+            android:background="@drawable/actionbar_background"
+            android:layout_gravity="top|left|bottom|right"
+            android:textColor="#ffffff" />
+
+        <EditText
+            style="?android:attr/textViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/line_end_text"
+            android:layout_weight="1"
+            android:editable="true"
+            android:inputType="text"
+            android:background="@null"
+            android:paddingLeft="5dp"
+            android:textSize="18dp" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/div"></LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#faffffff">
+
+        <Button
+            android:layout_width="73dp"
+            android:layout_height="match_parent"
+            android:text="@string/line_time"
+            android:id="@+id/line_time"
+            android:background="@drawable/actionbar_background"
+            android:layout_gravity="top|left|bottom|right"
+            android:textColor="#ffffff" />
+
+        <TextView
+            style="?android:attr/textViewStyle"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:id="@+id/line_time_text"
+            android:layout_weight="1"
+            android:editable="true"
+            android:inputType="text"
+            android:text="现在时刻"
+            android:background="@null"
+            android:textSize="18dp"
+            android:textIsSelectable="false"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp" />
+
+        <Button
+            android:layout_width="73dp"
+            android:layout_height="match_parent"
+            android:text="搜索"
+            android:id="@+id/line_search"
+            android:layout_gravity="top|left|bottom|right"
+            android:textColor="#ffffff"
+            android:background="#ffbc12" />
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/div"></LinearLayout>
+
+    <!--<ScrollView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/line_scrollView"-->
+        <!--android:layout_gravity="center_horizontal" >-->
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/line_listView" />
+    <!--</ScrollView>-->
+
 </LinearLayout>

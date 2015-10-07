@@ -1,4 +1,4 @@
-package com.sudalv.subway;
+package com.sudalv.subway.util;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;

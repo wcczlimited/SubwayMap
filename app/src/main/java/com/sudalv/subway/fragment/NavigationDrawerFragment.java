@@ -22,7 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.sudalv.subway.DrawerListAdapter;
-import com.sudalv.subway.DrawerListItem;
+import com.sudalv.subway.listitem.DrawerListItem;
 import com.sudalv.subway.R;
 
 import java.util.ArrayList;
@@ -206,7 +206,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    private void selectItem(int position) {
+    public void selectItem(int position) {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);

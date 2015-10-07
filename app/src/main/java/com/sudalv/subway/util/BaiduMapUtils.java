@@ -1,6 +1,8 @@
-package com.sudalv.subway;
+package com.sudalv.subway.util;
 
 import com.baidu.mapapi.model.LatLng;
+import com.sudalv.subway.listitem.LineItem;
+import com.sudalv.subway.listitem.StationItem;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

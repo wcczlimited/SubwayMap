@@ -1,4 +1,4 @@
-package com.sudalv.subway;
+package com.sudalv.subway.listitem;
 
 import com.baidu.mapapi.model.LatLng;
 
