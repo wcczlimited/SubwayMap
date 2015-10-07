@@ -71,6 +71,7 @@ public class LauncherActivity extends Activity
     public static String user_select_end = "";
     public static String user_name = "";
     public static int user_sex = 0;
+    // TODO: read username and sex from local file
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

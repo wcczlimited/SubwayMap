@@ -107,18 +107,12 @@ public class UserSettingFragment extends Fragment {
             public void onClick(View v) {
                 LauncherActivity.user_name = usernameText.getText().toString();
                 LauncherActivity.user_sex = mUserSex;
+                // TODO: save username and sex to local file
                 ((LauncherActivity) getActivity()).changeUserHeader();
                 getFragmentManager().popBackStack();
             }
         });
         return view;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
