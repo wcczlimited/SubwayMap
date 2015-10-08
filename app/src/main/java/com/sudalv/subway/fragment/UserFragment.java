@@ -1,17 +1,18 @@
 package com.sudalv.subway.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
@@ -19,6 +20,7 @@ import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.util.HistoryUtils;
 
 import java.io.File;
 
@@ -37,16 +39,11 @@ public class UserFragment extends Fragment {
     private View view;
 
     private OnFragmentInteractionListener mListener;
-    /* 请求码*/
-    private static final int IMAGE_REQUEST_CODE = 0;
-    private static final int CAMERA_REQUEST_CODE = 1;
-    private static final int RESULT_REQUEST_CODE = 2;
-    private static final int SELECT_PIC_KITKAT = 3;
-    /*头像名称*/
-    private static final String IMAGE_FILE_NAME = "faceImage.jpg";
     /*UI*/
     private BootstrapCircleThumbnail faceImage;
     private BootstrapButton btn_setting;
+    private Button btn_history;
+    private TextView mMileText, mCoinText, mRateText;
 
     /**
      * Use this factory method to create a new instance of
@@ -80,6 +77,16 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user, container, false);
+        //read history data from local file && set history UI
+        HistoryUtils.readHistoryFromFile(getResources().openRawResource(R.raw.history));
+        mMileText = (TextView) view.findViewById(R.id.user_miles_text);
+        mCoinText = (TextView) view.findViewById(R.id.user_coins_text);
+        mRateText = (TextView) view.findViewById(R.id.user_rates_text);
+        mMileText.setText(HistoryUtils.getTotalMiles() + "");
+        mCoinText.setText(HistoryUtils.getTotalCoins() + "");
+        mRateText.setText(HistoryUtils.getAverageRate() + "%");
+
+        //set User face Image
         File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
         faceImage = (BootstrapCircleThumbnail)view.findViewById(R.id.user_face_image);
         if(face.exists()){
@@ -91,6 +98,7 @@ public class UserFragment extends Fragment {
                 Crop.pickImage(getActivity(), getFragmentManager().findFragmentByTag(mTitle));
             }
         });
+        /*setting button configuration*/
         btn_setting = (BootstrapButton)view.findViewById(R.id.user_btn_edit);
         btn_setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +118,27 @@ public class UserFragment extends Fragment {
                 ft.commit();
             }
         });
+        /*history button configuration*/
+        btn_history = (Button) view.findViewById(R.id.btn_chuxing_history);
+        btn_history.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                Fragment currentFragment = fragmentManager.findFragmentByTag("出行历史");
+                ft.addToBackStack(mTitle);
+                if (currentFragment == null) {
+                    currentFragment = HistoryFragment.newInstance("出行历史");
+                    ft.add(R.id.container, currentFragment, "出行历史");
+                }
+                if (currentFragment.isDetached()) {
+                    ft.attach(currentFragment);
+                }
+                ft.show(currentFragment);
+                ft.commit();
+            }
+        });
+
         return view;
     }
 
@@ -161,7 +190,6 @@ public class UserFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 

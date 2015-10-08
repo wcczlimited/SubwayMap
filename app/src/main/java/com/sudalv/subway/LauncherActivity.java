@@ -6,38 +6,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapStatus;
-import com.baidu.mapapi.map.MapStatusUpdate;
-import com.baidu.mapapi.map.MapStatusUpdateFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
-import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
-import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.model.LatLng;
 import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.fragment.LineFragment;
 import com.sudalv.subway.fragment.MapFragment;
@@ -45,13 +23,6 @@ import com.sudalv.subway.fragment.NavigationDrawerFragment;
 import com.sudalv.subway.fragment.UserFragment;
 
 import java.io.File;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.microedition.khronos.opengles.GL10;
 
 public class LauncherActivity extends Activity
         implements  NavigationDrawerFragment.NavigationDrawerCallbacks{
@@ -71,7 +42,6 @@ public class LauncherActivity extends Activity
     public static String user_select_end = "";
     public static String user_name = "";
     public static int user_sex = 0;
-    // TODO: read username and sex from local file
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +94,7 @@ public class LauncherActivity extends Activity
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0) {
             getFragmentManager().popBackStack();
+            onSectionAttached(getFragmentManager().getBackStackEntryAt(0).getName());
         } else {
             super.onBackPressed();
         }
@@ -131,6 +102,7 @@ public class LauncherActivity extends Activity
 
     public void onSectionAttached(String title) {
         mTitle = title;
+        restoreActionBar();
     }
 
     @Override

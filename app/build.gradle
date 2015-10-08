@@ -18,6 +18,9 @@ android {
         }
     }
 }
+repositories {
+    maven { url "https://jitpack.io" }
+}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -28,4 +31,5 @@ dependencies {
     compile 'com.beardedhen:androidbootstrap:+'
     compile files('libs/baidumapapi_v3_5_0.jar')
     compile files('libs/locSDK_5.2.jar')
+    compile 'com.github.PhilJay:MPAndroidChart:v2.1.4'
 }

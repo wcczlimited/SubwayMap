@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,12 +22,12 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sudalv.subway.DrawerListAdapter;
 import com.sudalv.subway.LauncherActivity;
-import com.sudalv.subway.listitem.DrawerListItem;
 import com.sudalv.subway.R;
+import com.sudalv.subway.listitem.DrawerListItem;
+import com.sudalv.subway.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -105,14 +103,22 @@ public class NavigationDrawerFragment extends Fragment {
         try {
             mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
             headerView = inflater.inflate(R.layout.list_header, null);
+            /*Read user face image from local file, if exist*/
             File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
             if(face.exists()) {
                 ImageView user = (ImageView) headerView.findViewById(R.id.item_icon);
                 user.setImageURI(Uri.fromFile(face));
             }
             TextView username = (TextView)headerView.findViewById(R.id.item_username);
-            if(!LauncherActivity.user_name.equals(""))
+            /*read username and sex from local file, if exist*/
+            String name = FileUtils.readFromFile(getActivity().getFilesDir(), "username");
+            LauncherActivity.user_name = name.equals("") ? LauncherActivity.user_name : name;
+            String sex = FileUtils.readFromFile(getActivity().getFilesDir(), "usersex");
+            LauncherActivity.user_sex = sex.equals("") ? 0 : Integer.parseInt(sex);
+            if (!LauncherActivity.user_name.equals("")) {
                 username.setText(LauncherActivity.user_name);
+            }
+            /*Add configured header to the drawer list view*/
             mDrawerListView.addHeaderView(headerView);
             mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

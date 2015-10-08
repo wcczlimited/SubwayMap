@@ -1,12 +1,12 @@
 package com.sudalv.subway.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +34,12 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.sudalv.subway.LauncherActivity;
+import com.sudalv.subway.R;
+import com.sudalv.subway.listitem.LineItem;
+import com.sudalv.subway.listitem.StationItem;
 import com.sudalv.subway.util.BaiduMapUtils;
 import com.sudalv.subway.util.GLUtil;
-import com.sudalv.subway.LauncherActivity;
-import com.sudalv.subway.listitem.LineItem;
-import com.sudalv.subway.R;
-import com.sudalv.subway.listitem.StationItem;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -406,7 +406,6 @@ public class MapFragment extends Fragment{
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 

@@ -1,9 +1,9 @@
 package com.sudalv.subway.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +12,7 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.util.FileUtils;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,7 +47,6 @@ public class UserSettingFragment extends Fragment {
      * @param usersex User's sex
      * @return A new instance of fragment UserSettingFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static UserSettingFragment newInstance(String title, String username, int usersex) {
         UserSettingFragment fragment = new UserSettingFragment();
         Bundle args = new Bundle();
@@ -107,7 +107,8 @@ public class UserSettingFragment extends Fragment {
             public void onClick(View v) {
                 LauncherActivity.user_name = usernameText.getText().toString();
                 LauncherActivity.user_sex = mUserSex;
-                // TODO: save username and sex to local file
+                FileUtils.outToFile(getActivity().getFilesDir(), "username", LauncherActivity.user_name);
+                FileUtils.outToFile(getActivity().getFilesDir(), "usersex", LauncherActivity.user_sex + "");
                 ((LauncherActivity) getActivity()).changeUserHeader();
                 getFragmentManager().popBackStack();
             }
@@ -139,7 +140,6 @@ public class UserSettingFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
 
