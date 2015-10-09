@@ -20,6 +20,8 @@ import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.util.DBManager;
+import com.sudalv.subway.util.DatabaseHelper;
 import com.sudalv.subway.util.HistoryUtils;
 
 import java.io.File;
@@ -78,7 +80,17 @@ public class UserFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user, container, false);
         //read history data from local file && set history UI
-        HistoryUtils.readHistoryFromFile(getResources().openRawResource(R.raw.history));
+
+        DBManager dbManager = new DBManager(getActivity());
+        if (dbManager.isTableExist()) {
+            HistoryUtils.readHistoryFromFile(getResources().openRawResource(R.raw.history));
+            System.out.println("First Create an default Database");
+            dbManager.dropTable(DatabaseHelper.TABLE_NAME);
+            dbManager.createHistoryTable();
+            dbManager.add(HistoryUtils.getHistoryList());
+            dbManager.closeDB();
+        }
+        HistoryUtils.getHistoryFromDataBase(getActivity());
         mMileText = (TextView) view.findViewById(R.id.user_miles_text);
         mCoinText = (TextView) view.findViewById(R.id.user_coins_text);
         mRateText = (TextView) view.findViewById(R.id.user_rates_text);
@@ -90,7 +102,7 @@ public class UserFragment extends Fragment {
         File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
         faceImage = (BootstrapCircleThumbnail)view.findViewById(R.id.user_face_image);
         if(face.exists()){
-            faceImage.setImage(BitmapFactory.decodeFile(face.getPath()));
+            faceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));
         }
         faceImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -159,7 +171,7 @@ public class UserFragment extends Fragment {
     private void handleCrop(int resultCode, Intent result) {
         if (resultCode ==  Activity.RESULT_OK) {
             File face = new File(getActivity().getFilesDir(),"faceimage_cropped");
-            faceImage.setImage(BitmapFactory.decodeFile(face.getPath()));
+            faceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));
             ((LauncherActivity) getActivity()).changeUserHeader();
         } else if (resultCode == Crop.RESULT_ERROR) {
             Toast.makeText(getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();

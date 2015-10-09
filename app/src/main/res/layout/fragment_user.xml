@@ -1,7 +1,7 @@
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.sudalv.subway.fragment.UserFragment"
+            xmlns:bootstrap="http://schemas.android.com/apk/res-auto"
     android:rowCount="8"
     android:columnCount="6"
     android:background="@drawable/user_bg">
@@ -16,8 +16,7 @@
         <com.beardedhen.androidbootstrap.BootstrapCircleThumbnail
             android:layout_width="130dp"
             android:layout_height="130dp"
-            bootstrap:bct_image="@drawable/user_icon"
-            bootstrap:bct_size="xlarge"
+            android:src="@drawable/user_icon"
             android:layout_gravity="center_horizontal|center_vertical"
             android:id="@+id/user_face_image" />
     </FrameLayout>
@@ -159,9 +158,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="编辑"
+            bootstrap:bootstrapSize="lg"
             android:textStyle="bold"
-            bootstrap:bb_type="primary"
-            bootstrap:bb_roundedCorners="true"
+            bootstrap:bootstrapBrand="primary"
+            bootstrap:roundedCorners="true"
             />
         <!--<Button-->
             <!--android:id="@+id/btn_edit"-->

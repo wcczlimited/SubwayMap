@@ -9,6 +9,9 @@ public class HistoryItem {
     private int mMile;
     private int mRate;
 
+    public HistoryItem() {
+
+    }
     public HistoryItem(String date, int coin, int mile, int rate) {
         mDate = date;
         mCoin = coin;

@@ -1,5 +1,7 @@
 package com.sudalv.subway.util;
 
+import android.content.Context;
+
 import com.sudalv.subway.listitem.HistoryItem;
 
 import org.json.JSONArray;
@@ -14,7 +16,7 @@ import java.util.List;
  */
 public class HistoryUtils {
     private static List<HistoryItem> historyList;
-
+    private static DBManager dbManager;
     public static void readHistoryFromFile(InputStream input) {
         historyList = new ArrayList<>();
         try {
@@ -35,6 +37,17 @@ public class HistoryUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void getHistoryFromDataBase(Context context) {
+        dbManager = new DBManager(context);
+        historyList = new ArrayList<>();
+        historyList = dbManager.query();
+        dbManager.closeDB();
+    }
+
+    public static List<HistoryItem> getHistoryList() {
+        return historyList;
     }
 
     public static String[] getXAxis() {

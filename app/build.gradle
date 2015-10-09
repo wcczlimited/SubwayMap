@@ -28,7 +28,7 @@ dependencies {
     compile 'me.dm7.barcodescanner:zxing:1.5'
     compile 'me.dm7.barcodescanner:zbar:1.5'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
-    compile 'com.beardedhen:androidbootstrap:+'
+    compile 'com.beardedhen:androidbootstrap:2.0.0'
     compile files('libs/baidumapapi_v3_5_0.jar')
     compile files('libs/locSDK_5.2.jar')
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.4'

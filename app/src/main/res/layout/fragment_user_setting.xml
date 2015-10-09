@@ -19,10 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="80sp"
         android:layout_gravity="center_horizontal">
-        <com.beardedhen.androidbootstrap.FontAwesomeText
+
+        <com.beardedhen.androidbootstrap.AwesomeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fontawesometext:fa_icon="fa-github"
+            fontawesometext:fontAwesomeIcon="fa_github"
             android:layout_margin="10dp"
             android:textSize="32sp"
             android:layout_gravity="center"
@@ -33,9 +34,9 @@
             android:layout_height="50dp"
             android:layout_margin="10dp"
             android:hint="用户名"
-            bootstrapbutton:be_roundedCorners="true"
+            bootstrapbutton:roundedCorners="true"
             android:gravity="center"
-            bootstrapbutton:be_state="default"
+            bootstrapbutton:bootstrapBrand="primary"
             android:layout_gravity="center"
             android:layout_marginRight="20dp"
             android:textSize="18sp"
@@ -50,18 +51,20 @@
         android:layout_width="match_parent"
         android:layout_height="80sp"
         android:layout_gravity="center_horizontal">
-        <com.beardedhen.androidbootstrap.FontAwesomeText
+
+        <com.beardedhen.androidbootstrap.AwesomeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fontawesometext:fa_icon="fa-male"
+            fontawesometext:fontAwesomeIcon="fa_male"
             android:layout_margin="10dp"
             android:textSize="32sp"
             android:layout_gravity="center"
             android:layout_weight="1" />
-        <com.beardedhen.androidbootstrap.FontAwesomeText
+
+        <com.beardedhen.androidbootstrap.AwesomeTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            fontawesometext:fa_icon="fa-female"
+            fontawesometext:fontAwesomeIcon="fa_female"
             android:layout_margin="10dp"
             android:textSize="32sp"
             android:layout_gravity="center"
@@ -74,9 +77,10 @@
             android:layout_height="wrap_content"
             android:text="男"
             android:textStyle="bold"
-            bootstrap:bb_type="primary"
+            bootstrap:bootstrapBrand="primary"
             android:layout_gravity="center"
-            bootstrap:bb_roundedCorners="true"
+            bootstrap:roundedCorners="true"
+            bootstrap:bootstrapSize="lg"
             android:layout_weight="1"
             />
         <com.beardedhen.androidbootstrap.BootstrapButton
@@ -87,9 +91,10 @@
             android:layout_height="wrap_content"
             android:text="女"
             android:textStyle="bold"
-            bootstrap:bb_type="primary"
+            bootstrap:bootstrapBrand="primary"
             android:layout_gravity="center"
-            bootstrap:bb_roundedCorners="true"
+            bootstrap:roundedCorners="true"
+            bootstrap:bootstrapSize="lg"
             android:layout_weight="1" />
     </LinearLayout>
 
@@ -106,9 +111,10 @@
             android:layout_height="wrap_content"
             android:text="确认"
             android:textStyle="bold"
-            bootstrap:bb_type="success"
+            bootstrap:bootstrapSize="lg"
+            bootstrap:bootstrapBrand="success"
             android:layout_gravity="bottom"
-            bootstrap:bb_roundedCorners="true"
+            bootstrap:roundedCorners="true"
             />
     </FrameLayout>
 </LinearLayout>
