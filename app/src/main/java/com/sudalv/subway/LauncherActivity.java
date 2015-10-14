@@ -27,21 +27,20 @@ import java.io.File;
 public class LauncherActivity extends Activity
         implements  NavigationDrawerFragment.NavigationDrawerCallbacks{
 
-    /**
-     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
-     */
-    private NavigationDrawerFragment mNavigationDrawerFragment;
-
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
-
-    private Fragment currentFragment, lastFragment;
     public static String user_select_start = "";
     public static String user_select_end = "";
     public static String user_name = "";
     public static int user_sex = 0;
+    /**
+     * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
+     */
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+    /**
+     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
+     */
+    private CharSequence mTitle;
+    private Fragment currentFragment, lastFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +48,6 @@ public class LauncherActivity extends Activity
         try {
             mNavigationDrawerFragment = (NavigationDrawerFragment) getFragmentManager().findFragmentById(R.id.navigation_drawer);
             mTitle = getTitle();
-
             // 设置抽屉
             mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
             //捕获uncaught异常
@@ -145,7 +143,6 @@ public class LauncherActivity extends Activity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent result) {
-        System.out.println("4545");
         if (requestCode == Crop.REQUEST_PICK && resultCode == Activity.RESULT_OK) {
             beginCrop(result.getData());
         } else if (requestCode == Crop.REQUEST_CROP) {
@@ -154,13 +151,11 @@ public class LauncherActivity extends Activity
     }
 
     private void beginCrop(Uri source) {
-        System.out.println("333333333333");
-        Uri destination = Uri.fromFile(new File(getCacheDir(), "cropped"));
+        Uri destination = Uri.fromFile(new File(getCacheDir(), "faceimage_cropped"));
         Crop.of(source, destination).asSquare().start(this);
     }
 
     private void handleCrop(int resultCode, Intent result) {
-        System.out.println("2222222");
         if (resultCode ==  Activity.RESULT_OK) {
             ViewGroup viewGroup = (ViewGroup) findViewById(android.R.id.content);
             View view = getLayoutInflater().inflate(R.layout.fragment_user,viewGroup, false);
