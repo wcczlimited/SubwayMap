@@ -2,6 +2,7 @@ package com.sudalv.subway.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
+import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
 import com.sudalv.subway.util.FileUtils;
+
+import java.io.File;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +39,7 @@ public class UserSettingFragment extends Fragment {
     /*UI*/
     private BootstrapEditText usernameText;
     private BootstrapButton btn_male, btn_female, btn_confirm;
+    private BootstrapCircleThumbnail settingfaceImage;
 
     private OnFragmentInteractionListener mListener;
     private View view;
@@ -76,6 +81,18 @@ public class UserSettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user_setting, container, false);
+        //set User face Image
+        File face = new File(getActivity().getFilesDir(), "faceimage_cropped");
+        settingfaceImage = (BootstrapCircleThumbnail) view.findViewById(R.id.user_setting_face_image);
+        if (face.exists()) {
+            settingfaceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));
+        }
+        settingfaceImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("hahaha");
+            }
+        });
         usernameText = (BootstrapEditText)view.findViewById(R.id.username);
         usernameText.setText(mUsername);
         btn_female = (BootstrapButton)view.findViewById(R.id.user_btn_female);

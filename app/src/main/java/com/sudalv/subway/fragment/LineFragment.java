@@ -2,23 +2,30 @@ package com.sudalv.subway.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.util.CalLineUtils;
 import com.sudalv.subway.util.DateTimePickDialogUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -33,6 +40,7 @@ public class LineFragment extends Fragment {
     private static final String ARG_TITLE = "title";
 
     private String mTitle;
+    private List<List<String>> path;
 
     private OnFragmentInteractionListener mListener;
     private View view;
@@ -40,6 +48,7 @@ public class LineFragment extends Fragment {
     private EditText mStartEditText;
     private EditText mEndEditText;
     private TextView mTimeTextView;
+    private Button mSearchButton;
 
     private String initStartDateTime = "2013年9月3日 14:44"; // 初始化开始时间
     /**
@@ -75,8 +84,34 @@ public class LineFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_line, container, false);
         mListView = (ListView)view.findViewById(R.id.line_listView);
-        MyAdapter ba = new MyAdapter(this.getActivity());
-        mListView.setAdapter(ba);
+        //mListView.setVisibility(View.INVISIBLE);
+        //MyAdapter ba = new MyAdapter(this.getActivity());
+        //mListView.setAdapter(ba);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TextView coinText = (TextView) view.findViewById(R.id.line_item_coin);
+                String coin = coinText.getText().toString();
+                List<String> selecedPath = path.get(position);
+                for (String item : selecedPath) {
+                    System.out.print(item + " ");
+                }
+                System.out.println();
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                Fragment currentFragment = fragmentManager.findFragmentByTag("实时监测");
+                ft.addToBackStack(mTitle);
+                if (currentFragment == null) {
+                    currentFragment = RealTimeLineFragment.newInstance("实时监测", new ArrayList<String>(selecedPath));
+                    ft.add(R.id.container, currentFragment, "实时监测");
+                }
+                if (currentFragment.isDetached()) {
+                    ft.attach(currentFragment);
+                }
+                ft.show(currentFragment);
+                ft.commit();
+            }
+        });
         mStartEditText = (EditText)view.findViewById(R.id.line_start_text);
         mEndEditText = (EditText)view.findViewById(R.id.line_end_text);
         mStartEditText.setText(LauncherActivity.user_select_start);
@@ -90,6 +125,20 @@ public class LineFragment extends Fragment {
                         getActivity(), initStartDateTime);
                 dateTimePicKDialog.dateTimePicKDialog(mTimeTextView);
 
+            }
+        });
+        mSearchButton = (Button) view.findViewById(R.id.line_search);
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListView.setVisibility(View.VISIBLE);
+                String start = mStartEditText.getText().toString();
+                String end = mEndEditText.getText().toString();
+                path = CalLineUtils.getResult(start, end);
+                //MyAdapter adapter = (MyAdapter)mListView.getAdapter();
+                //adapter.notifyDataSetChanged();
+                MyAdapter ba = new MyAdapter(getActivity());
+                mListView.setAdapter(ba);
             }
         });
         return view;
@@ -124,12 +173,14 @@ public class LineFragment extends Fragment {
 
     private class MyAdapter extends BaseAdapter{
         private Context mContext;
+        private List<List<String>> newPath;
         public MyAdapter(Context context){
             mContext = context;
+            newPath = CalLineUtils.getSimplePath(path);
         }
         @Override
         public int getCount() {
-            return 7;
+            return path.size();
         }
 
         @Override
@@ -145,6 +196,16 @@ public class LineFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             convertView=LayoutInflater.from(mContext).inflate(R.layout.line_list_item, null);
+            TextView lineView = (TextView) convertView.findViewById(R.id.line_item_line);
+            List<String> thisPath = newPath.get(position);
+            String str = "";
+            for (int i = 0; i < thisPath.size() - 1; i++) {
+                str += thisPath.get(i) + "->";
+            }
+            str += thisPath.get(thisPath.size() - 1);
+            lineView.setText(str);
+            TextView timeView = (TextView) convertView.findViewById(R.id.line_item_time);
+            timeView.setText("时间未知" + " | " + path.get(position).size() + "站 | 步行未知");
             return convertView;
         }
     }

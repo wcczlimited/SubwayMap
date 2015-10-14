@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class BaiduMapUtils {
     private static List<LineItem> lines = new ArrayList<LineItem>();
     private static List<StationItem> stations = new ArrayList<StationItem>();
     private static List<LatLng> stationList = new ArrayList<LatLng>();
+    private static HashMap<Integer, StationItem> idToStat = new HashMap<>();
     public static List<StationItem> initStations(InputStream input){
         try {
             byte[] buffer = new byte[input.available()];
@@ -33,20 +35,33 @@ public class BaiduMapUtils {
                 int line = temp.getInt("line");
                 int id = temp.getInt("id");
                 stations.add(new StationItem(name,id,line,new LatLng(locY,locX)));
+                idToStat.put(id, new StationItem(name, id, line, new LatLng(locY, locX)));
             }
             input.close();
         }catch (Exception e){
             e.printStackTrace();
         }
+        //Initialize subway Find Path
+        CalLineUtils.initLineUtils(stations);
         return stations;
     }
 
     public static List<LatLng> getStationPosList(){
+        stationList = new ArrayList<>();
         for(StationItem item : stations){
             stationList.add(item.getmPos());
         }
         return stationList;
     }
+
+    public static ArrayList<LatLng> getRealtimeStationPosList(ArrayList<StationItem> stat) {
+        ArrayList<LatLng> Real = new ArrayList<>();
+        for (StationItem item : stat) {
+            Real.add(item.getmPos());
+        }
+        return Real;
+    }
+
     public static List<LineItem> initSubway(InputStream input){
         try {
             byte[] buffer = new byte[input.available()];
@@ -88,5 +103,32 @@ public class BaiduMapUtils {
             }
             lines.add(tempItem);
         }
+    }
+
+    public static ArrayList<StationItem> getRealtimeStations(ArrayList<String> StList) {
+        ArrayList<StationItem> res = new ArrayList<>();
+        for (String name : StList) {
+            for (StationItem item : stations) {
+                if (name.equals(item.getmName())) {
+                    res.add(item);
+                }
+            }
+        }
+        return res;
+    }
+
+    public static ArrayList<LineItem> getRealtimeLines(ArrayList<StationItem> StList) {
+        ArrayList<LineItem> res = new ArrayList<>();
+        String from = StList.get(0).getmName();
+        for (int i = 1; i < StList.size(); i++) {
+            String to = StList.get(i).getmName();
+            for (LineItem line : lines) {
+                if ((idToStat.get(line.getFrom()).getmName().equals(from) && idToStat.get(line.getTo()).getmName().equals(to)) || (idToStat.get(line.getFrom()).getmName().equals(to) && idToStat.get(line.getTo()).getmName().equals(from))) {
+                    res.add(line);
+                }
+            }
+            from = to;
+        }
+        return res;
     }
 }

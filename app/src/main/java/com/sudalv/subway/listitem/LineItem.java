@@ -23,4 +23,12 @@ public class LineItem {
     public List<LatLng> getPos(){
         return pos;
     }
+
+    public int getFrom() {
+        return Integer.parseInt(from);
+    }
+
+    public int getTo() {
+        return Integer.parseInt(to);
+    }
 }

@@ -9,10 +9,17 @@
     tools:context="com.sudalv.subway.fragment.UserSettingFragment"
     android:background="@drawable/user_bg">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"></LinearLayout>
+        android:layout_height="150dp">
+
+        <com.beardedhen.androidbootstrap.BootstrapCircleThumbnail
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:src="@drawable/user_icon"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:id="@+id/user_setting_face_image"/>
+    </FrameLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -117,4 +124,5 @@
             bootstrap:roundedCorners="true"
             />
     </FrameLayout>
+
 </LinearLayout>

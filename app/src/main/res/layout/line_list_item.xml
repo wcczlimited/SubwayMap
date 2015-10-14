@@ -11,12 +11,11 @@
         android:id="@+id/line_item_line"
         android:layout_column="0"
         android:layout_columnSpan="3"
-        android:layout_gravity="fill"
-        android:layout_width="wrap_content"
+              android:layout_width="370dp"
         android:layout_height="wrap_content"
         android:textColor="@drawable/text_color_primary_invertible"
         android:gravity="center_vertical"
-        android:text="龙阳路->世纪大道"
+              android:text="龙阳路->世纪大道->世纪大道->世纪大道->世纪大道->世纪大道->世纪大道"
         android:paddingLeft="15dp"
         android:textStyle="bold"
         android:layout_marginTop="5dp" />
@@ -45,7 +44,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp" />
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/line_item_points"
+              android:id="@+id/line_item_coin"
         android:layout_column="2"
         android:layout_columnSpan="1"
         android:layout_width="wrap_content"

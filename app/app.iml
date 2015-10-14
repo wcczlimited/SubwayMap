@@ -99,8 +99,8 @@
     <orderEntry type="library" exported="" name="zxing-1.5" level="project" />
     <orderEntry type="library" exported="" name="locSDK_5.2" level="project" />
     <orderEntry type="library" exported="" name="android-crop-1.0.1" level="project" />
-    <orderEntry type="library" exported="" name="MPAndroidChart-v2.1.4" level="project" />
     <orderEntry type="library" exported="" name="core-3.1.0" level="project" />
+    <orderEntry type="library" exported="" name="MPAndroidChart-v2.1.4" level="project" />
     <orderEntry type="library" exported="" name="zbar-1.5" level="project" />
     <orderEntry type="library" exported="" name="androidbootstrap-2.0.0" level="project" />
     <orderEntry type="library" exported="" name="core-1.5" level="project" />
