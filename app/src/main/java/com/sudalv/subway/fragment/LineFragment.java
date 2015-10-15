@@ -2,9 +2,8 @@ package com.sudalv.subway.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 
 import com.sudalv.subway.R;
 import com.sudalv.subway.activity.LauncherActivity;
+import com.sudalv.subway.activity.RealtimeActivity;
 import com.sudalv.subway.util.CalLineUtils;
 import com.sudalv.subway.util.DateTimePickDialogUtil;
 
@@ -98,19 +98,9 @@ public class LineFragment extends Fragment {
                     System.out.print(item + " ");
                 }
                 System.out.println();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                Fragment currentFragment = fragmentManager.findFragmentByTag("实时监测");
-                ft.addToBackStack(mTitle);
-                if (currentFragment == null) {
-                    currentFragment = RealTimeLineFragment.newInstance("实时监测", new ArrayList<String>(selecedPath));
-                    ft.add(R.id.container, currentFragment, "实时监测");
-                }
-                if (currentFragment.isDetached()) {
-                    ft.attach(currentFragment);
-                }
-                ft.show(currentFragment);
-                ft.commit();
+                Intent Real = new Intent(getActivity(), RealtimeActivity.class);
+                Real.putStringArrayListExtra("position", new ArrayList<String>(selecedPath));
+                startActivity(Real);
             }
         });
         mStartEditText = (EditText)view.findViewById(R.id.line_start_text);

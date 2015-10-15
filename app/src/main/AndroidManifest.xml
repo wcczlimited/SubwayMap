@@ -81,6 +81,11 @@
             android:label="@string/title_activity_user_image"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
+        <activity
+            android:name=".activity.RealtimeActivity"
+            android:label="@string/title_activity_realtime"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+        </activity>
     </application>
 
 </manifest>

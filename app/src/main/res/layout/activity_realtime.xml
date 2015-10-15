@@ -6,7 +6,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.sudalv.subway.activity.LauncherActivity$PlaceholderFragment">
+                tools:context="com.sudalv.subway.activity.RealtimeActivity">
 
     <com.baidu.mapapi.map.MapView
         android:id="@+id/real_bmapView"
@@ -22,4 +22,5 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="25dp"
         android:layout_marginTop="10dip"/>
+
 </RelativeLayout>
