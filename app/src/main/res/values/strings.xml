@@ -12,13 +12,8 @@
     <string name="line_time">时刻</string>
 
     <string name="title_activity_user_setting">UserSetting</string>
-
     <string name="title_activity_user_image">UserImageActivity</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_realtime">RealtimeActivity</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_about">AboutActivity</string>
     
 </resources>

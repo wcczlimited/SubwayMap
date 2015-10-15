@@ -19,6 +19,7 @@ import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.AboutActivity;
 import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.activity.UserImageActivity;
 import com.sudalv.subway.util.DBManager;
@@ -45,7 +46,7 @@ public class UserFragment extends Fragment {
     /*UI*/
     private BootstrapCircleThumbnail faceImage;
     private BootstrapButton btn_setting;
-    private Button btn_history, btn_card;
+    private Button btn_history, btn_card, btn_about;
     private TextView mMileText, mCoinText, mRateText;
 
     public UserFragment() {
@@ -152,7 +153,7 @@ public class UserFragment extends Fragment {
                 ft.commit();
             }
         });
-        /*card cutton configuration*/
+        /*card button configuration*/
         btn_card = (Button) view.findViewById(R.id.btn_jiaotongka);
         btn_card.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +171,16 @@ public class UserFragment extends Fragment {
                 }
                 ft.show(currentFragment);
                 ft.commit();
+            }
+        });
+
+        /*about button configuration*/
+        btn_about = (Button) view.findViewById(R.id.btn_about);
+        btn_about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), AboutActivity.class);
+                startActivity(intent);
             }
         });
 
