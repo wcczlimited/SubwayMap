@@ -22,8 +22,8 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.util.HistoryUtils;
 
 import java.util.ArrayList;
@@ -49,6 +49,10 @@ public class HistoryFragment extends Fragment {
     private TextView mMileText, mCoinText, mRateText;
     private List<Integer> mMileList, mCoinList, mRateList;
 
+    public HistoryFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -62,10 +66,6 @@ public class HistoryFragment extends Fragment {
         args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public HistoryFragment() {
-        // Required empty public constructor
     }
 
     @Override

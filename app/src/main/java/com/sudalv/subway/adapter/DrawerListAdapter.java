@@ -1,4 +1,4 @@
-package com.sudalv.subway;
+package com.sudalv.subway.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.sudalv.subway.R;
 import com.sudalv.subway.listitem.DrawerListItem;
 
 import java.util.List;

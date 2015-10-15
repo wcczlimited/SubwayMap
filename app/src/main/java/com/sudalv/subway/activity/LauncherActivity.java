@@ -1,4 +1,4 @@
-package com.sudalv.subway;
+package com.sudalv.subway.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
@@ -17,10 +17,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.soundcloud.android.crop.Crop;
+import com.sudalv.subway.R;
 import com.sudalv.subway.fragment.LineFragment;
 import com.sudalv.subway.fragment.MapFragment;
 import com.sudalv.subway.fragment.NavigationDrawerFragment;
 import com.sudalv.subway.fragment.UserFragment;
+import com.sudalv.subway.util.UncaughtExceptionHandler;
 
 import java.io.File;
 

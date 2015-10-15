@@ -18,8 +18,9 @@ import android.widget.Toast;
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.soundcloud.android.crop.Crop;
-import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.LauncherActivity;
+import com.sudalv.subway.activity.UserImageActivity;
 import com.sudalv.subway.util.DBManager;
 import com.sudalv.subway.util.DatabaseHelper;
 import com.sudalv.subway.util.HistoryUtils;
@@ -44,8 +45,12 @@ public class UserFragment extends Fragment {
     /*UI*/
     private BootstrapCircleThumbnail faceImage;
     private BootstrapButton btn_setting;
-    private Button btn_history;
+    private Button btn_history, btn_card;
     private TextView mMileText, mCoinText, mRateText;
+
+    public UserFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -60,10 +65,6 @@ public class UserFragment extends Fragment {
         args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public UserFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -107,7 +108,8 @@ public class UserFragment extends Fragment {
         faceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Crop.pickImage(getActivity(), getFragmentManager().findFragmentByTag(mTitle));
+                Intent userImageIntent = new Intent(getActivity(), UserImageActivity.class);
+                getActivity().startActivity(userImageIntent);
             }
         });
         /*setting button configuration*/
@@ -150,10 +152,39 @@ public class UserFragment extends Fragment {
                 ft.commit();
             }
         });
+        /*card cutton configuration*/
+        btn_card = (Button) view.findViewById(R.id.btn_jiaotongka);
+        btn_card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                Fragment currentFragment = fragmentManager.findFragmentByTag("我的交通卡");
+                ft.addToBackStack(mTitle);
+                if (currentFragment == null) {
+                    currentFragment = CardFragment.newInstance("我的交通卡");
+                    ft.add(R.id.container, currentFragment, "我的交通卡");
+                }
+                if (currentFragment.isDetached()) {
+                    ft.attach(currentFragment);
+                }
+                ft.show(currentFragment);
+                ft.commit();
+            }
+        });
 
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("onResume");
+        File face = new File(getActivity().getFilesDir(), "faceimage_cropped");
+        if (face.exists()) {
+            faceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));
+        }
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent result) {
         if (requestCode == Crop.REQUEST_PICK && resultCode == Activity.RESULT_OK) {

@@ -21,6 +21,11 @@ public class BaiduMapUtils {
     private static List<LatLng> stationList = new ArrayList<LatLng>();
     private static HashMap<Integer, StationItem> idToStat = new HashMap<>();
     public static List<StationItem> initStations(InputStream input){
+        System.out.println("----------BaiduMapUtils initStations");
+        lines = new ArrayList<LineItem>();
+        stations = new ArrayList<StationItem>();
+        stationList = new ArrayList<LatLng>();
+        idToStat = new HashMap<>();
         try {
             byte[] buffer = new byte[input.available()];
             input.read(buffer);
@@ -120,6 +125,8 @@ public class BaiduMapUtils {
     public static ArrayList<LineItem> getRealtimeLines(ArrayList<StationItem> StList) {
         ArrayList<LineItem> res = new ArrayList<>();
         String from = StList.get(0).getmName();
+        System.out.println("getRealtimeLines " + lines.size() + " " + idToStat.size());
+
         for (int i = 1; i < StList.size(); i++) {
             String to = StList.get(i).getmName();
             for (LineItem line : lines) {

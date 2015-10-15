@@ -1,4 +1,4 @@
-package com.sudalv.subway;
+package com.sudalv.subway.activity;
 
 import android.app.Application;
 

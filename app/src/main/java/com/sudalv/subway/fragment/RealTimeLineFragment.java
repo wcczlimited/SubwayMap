@@ -27,8 +27,8 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.listitem.LineItem;
 import com.sudalv.subway.listitem.StationItem;
 import com.sudalv.subway.util.BaiduMapUtils;
@@ -81,7 +81,49 @@ public class RealTimeLineFragment extends Fragment {
     private FloatBuffer vertexBuffer;
     private List<LatLng> stationList;
     private Map<Marker, String> stationOverlayMap;
+    BaiduMap.OnMapStatusChangeListener listener = new BaiduMap.OnMapStatusChangeListener() {
+        /**
+         * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
+         *
+         * @param status 地图状态改变开始时的地图状态
+         */
+        public void onMapStatusChangeStart(MapStatus status) {
+        }
+
+        /**
+         * 地图状态变化中
+         *
+         * @param status 当前地图状态
+         */
+        public void onMapStatusChange(MapStatus status) {
+            if (status.zoom < 13) {
+                if (!stationOverlayMap.isEmpty()) {
+                    for (Map.Entry<Marker, String> overlay : stationOverlayMap.entrySet()) {
+                        overlay.getKey().remove();
+                    }
+                    stationOverlayMap.clear();
+                }
+            }
+        }
+
+        /**
+         * 地图状态改变结束
+         *
+         * @param status 地图状态改变结束后的地图状态
+         */
+        public void onMapStatusChangeFinish(MapStatus status) {
+            if (stationOverlayMap.isEmpty()) {
+                if (status.zoom >= 13) {
+                    drawStations();
+                }
+            }
+        }
+    };
     private boolean mDrawLineFlag = true;
+
+    public RealTimeLineFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -100,13 +142,6 @@ public class RealTimeLineFragment extends Fragment {
         return fragment;
     }
 
-    public RealTimeLineFragment() {
-        // Required empty public constructor
-        lines = new ArrayList<>();
-        stations = new ArrayList<>();
-        stationOverlayMap = new HashMap<>();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,12 +154,15 @@ public class RealTimeLineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        lines = new ArrayList<>();
+        stations = new ArrayList<>();
+        stationOverlayMap = new HashMap<>();
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_real_time_line, container, false);
         initBaiduMap();
         stations = BaiduMapUtils.getRealtimeStations(mPosition);
         lines = BaiduMapUtils.getRealtimeLines(stations);
-        System.out.println(lines.size() + " start");
+        System.out.println(lines.size() + " " + stations.size()+ " start");
         stationList = BaiduMapUtils.getRealtimeStationPosList(stations);
         drawStations();
         mBaiduMap.setOnMapDrawFrameCallback(myBaiduMapCallBack);
@@ -192,6 +230,20 @@ public class RealTimeLineFragment extends Fragment {
         }
     }
 
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        public void onFragmentInteraction(Uri uri);
+    }
+
     public class BaiduMapCallBack implements BaiduMap.OnMapDrawFrameCallback {
         @Override
         public void onMapDrawFrame(GL10 gl10, MapStatus mapStatus) {
@@ -242,42 +294,6 @@ public class RealTimeLineFragment extends Fragment {
         }
     }
 
-    BaiduMap.OnMapStatusChangeListener listener = new BaiduMap.OnMapStatusChangeListener() {
-        /**
-         * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
-         * @param status 地图状态改变开始时的地图状态
-         */
-        public void onMapStatusChangeStart(MapStatus status) {
-        }
-
-        /**
-         * 地图状态变化中
-         * @param status 当前地图状态
-         */
-        public void onMapStatusChange(MapStatus status) {
-            if (status.zoom < 13) {
-                if (!stationOverlayMap.isEmpty()) {
-                    for (Map.Entry<Marker, String> overlay : stationOverlayMap.entrySet()) {
-                        overlay.getKey().remove();
-                    }
-                    stationOverlayMap.clear();
-                }
-            }
-        }
-
-        /**
-         * 地图状态改变结束
-         * @param status 地图状态改变结束后的地图状态
-         */
-        public void onMapStatusChangeFinish(MapStatus status) {
-            if (stationOverlayMap.isEmpty()) {
-                if (status.zoom >= 13) {
-                    drawStations();
-                }
-            }
-        }
-    };
-
     /**
      * 定位SDK监听函数
      */
@@ -305,20 +321,6 @@ public class RealTimeLineFragment extends Fragment {
 
         public void onReceivePoi(BDLocation poiLocation) {
         }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        public void onFragmentInteraction(Uri uri);
     }
 
 }

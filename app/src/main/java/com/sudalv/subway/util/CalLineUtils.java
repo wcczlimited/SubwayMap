@@ -19,6 +19,7 @@ public class CalLineUtils {
     private static Map<Integer, List<StationItem>> mLinesMap;
 
     public static void initLineUtils(List<StationItem> stations) {
+        System.out.println("--------CalculateUtils initLineUtils");
         mLinesMap = new HashMap<>();
         mGraph = new HashMap<>();
         mStationInfo = new HashMap<>();
@@ -86,6 +87,15 @@ public class CalLineUtils {
                 }
             }
         }
+//        for(Map.Entry<String,List<String>> item : mGraph.entrySet()){
+//            List<String> nei = item.getValue();
+//            String name = item.getKey();
+//            System.out.print(name+" ");
+//            for(String neis: nei){
+//                System.out.print(neis+" ");
+//            }
+//            System.out.println();
+//        }
 
 //        for(Map.Entry<String,List<String>> item: mGraph.entrySet()){
 //            System.out.print(item.getKey()+"->");

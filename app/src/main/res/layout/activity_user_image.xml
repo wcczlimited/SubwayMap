@@ -6,13 +6,14 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context="com.sudalv.subway.activity.BeforeLaunchActivity">
+                tools:context="com.sudalv.subway.activity.UserImageActivity">
+
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:id="@+id/userimage_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/before_launch"/>
+        android:src="@drawable/user_icon"/>
 </RelativeLayout>

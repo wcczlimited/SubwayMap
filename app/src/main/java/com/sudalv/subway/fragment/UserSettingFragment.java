@@ -2,18 +2,21 @@ package com.sudalv.subway.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.beardedhen.androidbootstrap.BootstrapCircleThumbnail;
 import com.beardedhen.androidbootstrap.BootstrapEditText;
-import com.sudalv.subway.LauncherActivity;
+import com.soundcloud.android.crop.Crop;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.util.FileUtils;
 
 import java.io.File;
@@ -44,6 +47,10 @@ public class UserSettingFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private View view;
 
+    public UserSettingFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -60,10 +67,6 @@ public class UserSettingFragment extends Fragment {
         args.putInt(ARG_USER_SEX, usersex);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public UserSettingFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -90,7 +93,7 @@ public class UserSettingFragment extends Fragment {
         settingfaceImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("hahaha");
+                Crop.pickImage(getActivity(), getFragmentManager().findFragmentByTag(mTitle));
             }
         });
         usernameText = (BootstrapEditText)view.findViewById(R.id.username);
@@ -122,6 +125,10 @@ public class UserSettingFragment extends Fragment {
         btn_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (usernameText.getText().toString().equals("")) {
+                    Toast.makeText(getActivity(), "请输入用户名", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 LauncherActivity.user_name = usernameText.getText().toString();
                 LauncherActivity.user_sex = mUserSex;
                 FileUtils.outToFile(getActivity().getFilesDir(), "username", LauncherActivity.user_name);
@@ -144,6 +151,30 @@ public class UserSettingFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent result) {
+        if (requestCode == Crop.REQUEST_PICK && resultCode == Activity.RESULT_OK) {
+            beginCrop(result.getData());
+        } else if (requestCode == Crop.REQUEST_CROP) {
+            handleCrop(resultCode, result);
+        }
+    }
+
+    private void beginCrop(Uri source) {
+        Uri destination = Uri.fromFile(new File(getActivity().getFilesDir(), "faceimage_cropped"));
+        Crop.of(source, destination).asSquare().start(getActivity(), getFragmentManager().findFragmentByTag(mTitle));
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == Activity.RESULT_OK) {
+            File face = new File(getActivity().getFilesDir(), "faceimage_cropped");
+            settingfaceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));
+            ((LauncherActivity) getActivity()).changeUserHeader();
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Toast.makeText(getActivity(), Crop.getError(result).getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**

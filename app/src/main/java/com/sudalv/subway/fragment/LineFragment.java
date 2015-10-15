@@ -17,8 +17,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.sudalv.subway.LauncherActivity;
 import com.sudalv.subway.R;
+import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.util.CalLineUtils;
 import com.sudalv.subway.util.DateTimePickDialogUtil;
 
@@ -51,6 +51,11 @@ public class LineFragment extends Fragment {
     private Button mSearchButton;
 
     private String initStartDateTime = "2013年9月3日 14:44"; // 初始化开始时间
+
+    public LineFragment() {
+        // Required empty public constructor
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -64,10 +69,6 @@ public class LineFragment extends Fragment {
         args.putString(ARG_TITLE, title);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public LineFragment() {
-        // Required empty public constructor
     }
 
     @Override
