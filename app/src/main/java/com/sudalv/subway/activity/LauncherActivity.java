@@ -8,6 +8,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +22,9 @@ import com.sudalv.subway.R;
 import com.sudalv.subway.fragment.LineFragment;
 import com.sudalv.subway.fragment.MapFragment;
 import com.sudalv.subway.fragment.NavigationDrawerFragment;
+import com.sudalv.subway.fragment.SettingFragment;
 import com.sudalv.subway.fragment.UserFragment;
+import com.sudalv.subway.util.FileUtils;
 import com.sudalv.subway.util.UncaughtExceptionHandler;
 
 import java.io.File;
@@ -33,6 +36,9 @@ public class LauncherActivity extends Activity
     public static String user_select_end = "";
     public static String user_name = "";
     public static int user_sex = 0;
+    public static PowerManager powerManager = null;
+    public static PowerManager.WakeLock wakeLock = null;
+    public static boolean wake = false;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -54,6 +60,14 @@ public class LauncherActivity extends Activity
             mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
             //捕获uncaught异常
             Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler(this));
+            powerManager = (PowerManager) this.getSystemService(this.POWER_SERVICE);
+            wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
+            String raw_wake = FileUtils.readFromFile(this.getFilesDir(), "wake_lock");
+            if (raw_wake.equals("1")) {
+                wake = true;
+            } else {
+                wake = false;
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -76,6 +90,9 @@ public class LauncherActivity extends Activity
             ft.replace(R.id.container, currentFragment, title);
         }else if(title.equals("用户")){
             currentFragment = UserFragment.newInstance(title);
+            ft.replace(R.id.container, currentFragment, title);
+        } else if (title.equals("设置")) {
+            currentFragment = SettingFragment.newInstance(title);
             ft.replace(R.id.container, currentFragment, title);
         }
         if(lastFragment != null) {
@@ -137,10 +154,13 @@ public class LauncherActivity extends Activity
     @Override
     protected void onResume() {
         super.onResume();
+        if (wake)
+            wakeLock.acquire();
     }
     @Override
     protected void onPause() {
         super.onPause();
+        wakeLock.release();
     }
 
     @Override

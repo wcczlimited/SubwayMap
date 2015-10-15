@@ -46,6 +46,27 @@ public class HistoryUtils {
         dbManager.closeDB();
     }
 
+    public static HistoryItem getLastHistroyRecord(Context context) {
+        dbManager = new DBManager(context);
+        List<HistoryItem> list = dbManager.query();
+        dbManager.closeDB();
+        if (list.size() == 0)
+            return null;
+        return list.get(list.size() - 1);
+    }
+
+    public static void insetHistoryItem(Context context, HistoryItem item) {
+        dbManager = new DBManager(context);
+        dbManager.insertHistoryItem(item);
+        dbManager.closeDB();
+    }
+
+    public static void updateHistoryItem(Context context, HistoryItem item) {
+        dbManager = new DBManager(context);
+        dbManager.updateHistoryItem(item);
+        dbManager.closeDB();
+    }
+
     public static List<HistoryItem> getHistoryList() {
         return historyList;
     }

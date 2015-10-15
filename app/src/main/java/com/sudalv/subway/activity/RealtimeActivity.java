@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -24,13 +25,17 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.sudalv.subway.R;
+import com.sudalv.subway.listitem.HistoryItem;
 import com.sudalv.subway.listitem.LineItem;
 import com.sudalv.subway.listitem.StationItem;
 import com.sudalv.subway.util.BaiduMapUtils;
 import com.sudalv.subway.util.GLUtil;
+import com.sudalv.subway.util.HistoryUtils;
 
 import java.nio.FloatBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +44,9 @@ import javax.microedition.khronos.opengles.GL10;
 public class RealtimeActivity extends Activity {
     private ArrayList<String> mPosition;
     private boolean mDrawLineFlag = true;
+    //出行相关
+    private double mTotalDistance = 0;
+    private int coin = 0;
 
     // 定位相关
     private MapView mMapView;
@@ -102,15 +110,18 @@ public class RealtimeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_realtime);
         mPosition = getIntent().getStringArrayListExtra("position");
+        coin = getIntent().getIntExtra("coin", 0);
         lines = new ArrayList<>();
         stations = new ArrayList<>();
         stationOverlayMap = new HashMap<>();
         initBaiduMap();
         stations = BaiduMapUtils.getRealtimeStations(mPosition);
         lines = BaiduMapUtils.getRealtimeLines(stations);
-        System.out.println(lines.size() + " " + stations.size() + " start");
         drawStations();
         mBaiduMap.setOnMapDrawFrameCallback(myBaiduMapCallBack);
+        for (int i = 1; i < stations.size(); i++) {
+            mTotalDistance += getDistanceFromTwoPoints(stations.get(i).getmPos(), stations.get(i - 1).getmPos());
+        }
     }
 
     //初始化百度Map
@@ -184,6 +195,19 @@ public class RealtimeActivity extends Activity {
         super.onPause();
     }
 
+    private double getDistanceFromTwoPoints(LatLng pos1, LatLng pos2) {
+        double pk = 180 / 3.14;
+        double a1 = pos1.latitude / pk;
+        double a2 = pos1.longitude / pk;
+        double b1 = pos2.latitude / pk;
+        double b2 = pos2.longitude / pk;
+        double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+        double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+        double t3 = Math.sin(a1) * Math.sin(b1);
+        double tt = Math.acos(t1 + t2 + t3);
+        return 6366000 * tt;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -235,9 +259,9 @@ public class RealtimeActivity extends Activity {
                 for (LineItem item : lines) {
                     if (mBaiduMap.getProjection() != null) {
                         vertexBuffer = GLUtil.calPolylinePoint(mBaiduMap, mapStatus, item.getPos());
-                        if (index % 3 == 2)
+                        if (item.getIsBusy() == 2)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 207, 136, 49), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
-                        else if (index % 3 == 1)
+                        else if (item.getIsBusy() == 1)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 180, 0, 0), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
                         else
                             GLUtil.drawPolyline(gl10, Color.argb(255, 152, 191, 85), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
@@ -270,6 +294,31 @@ public class RealtimeActivity extends Activity {
                         location.getLongitude());
                 MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
                 mBaiduMap.animateMapStatus(u);
+            }
+            if (stations.size() == 0)
+                return;
+            LatLng lastpos = stations.get(0).getmPos();
+            double distance = getDistanceFromTwoPoints(lastpos,
+                    new LatLng(location.getLatitude(), location.getLongitude()));
+            if (distance < 3000) {
+                StationItem temp = stations.remove(0);
+                Toast.makeText(RealtimeActivity.this, "你已经经过了" + temp.getmName(), Toast.LENGTH_LONG).show();
+            }
+            if (stations.size() == 0) {
+                Toast.makeText(RealtimeActivity.this, "您完成了本次出行, 距离为" + mTotalDistance + "，获得绿币" + coin, Toast.LENGTH_LONG).show();
+                HistoryItem item = HistoryUtils.getLastHistroyRecord(RealtimeActivity.this);
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式
+                String currDate = df.format(new Date());// new Date()为获取当前系统时间
+                System.out.println(currDate);
+                System.out.println(item.getmDate());
+                int mile = (int) Math.ceil(mTotalDistance / 1000);
+                if (item == null || !item.getmDate().equals(currDate)) {
+                    HistoryItem thisItem = new HistoryItem(currDate, coin, mile, 50);
+                    HistoryUtils.insetHistoryItem(RealtimeActivity.this, thisItem);
+                } else {
+                    HistoryItem thisItem = new HistoryItem(currDate, coin, mile, 50);
+                    HistoryUtils.updateHistoryItem(RealtimeActivity.this, thisItem);
+                }
             }
         }
 

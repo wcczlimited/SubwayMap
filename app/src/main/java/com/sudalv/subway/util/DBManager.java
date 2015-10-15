@@ -55,12 +55,42 @@ public class DBManager {
      * @param item
      */
     public void updateHistoryItem(HistoryItem item) {
-        ContentValues cv = new ContentValues();
-        cv.put("mile", item.getmMile());
-        cv.put("coin", item.getmCoin());
-        cv.put("rate", item.getmRate());
-        db.update(DatabaseHelper.TABLE_NAME, cv, "date = ?",
-                new String[]{item.getmDate()});
+        db.beginTransaction(); // 开始事务
+        try {
+            ContentValues cv = new ContentValues();
+            cv.put("mile", item.getmMile());
+            cv.put("coin", item.getmCoin());
+            cv.put("rate", item.getmRate());
+            db.update(DatabaseHelper.TABLE_NAME, cv, "date = ?",
+                    new String[]{item.getmDate()});
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        }
+    }
+
+    /**
+     * update history's mile, coin, rate
+     *
+     * @param item
+     */
+    public void insertHistoryItem(HistoryItem item) {
+        db.beginTransaction(); // 开始事务
+        try {
+            ContentValues values = new ContentValues();
+            values.put("date", item.getmDate());
+            values.put("mile", item.getmMile());
+            values.put("coin", item.getmCoin());
+            values.put("rate", item.getmRate());
+            long id = db.insert(DatabaseHelper.TABLE_NAME, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        }
     }
 
     /**

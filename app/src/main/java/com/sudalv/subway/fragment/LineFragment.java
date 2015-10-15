@@ -92,14 +92,13 @@ public class LineFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView coinText = (TextView) view.findViewById(R.id.line_item_coin);
-                String coin = coinText.getText().toString();
+                String coinStr = coinText.getText().toString();
                 List<String> selecedPath = path.get(position);
-                for (String item : selecedPath) {
-                    System.out.print(item + " ");
-                }
-                System.out.println();
                 Intent Real = new Intent(getActivity(), RealtimeActivity.class);
                 Real.putStringArrayListExtra("position", new ArrayList<String>(selecedPath));
+                coinStr = coinStr.substring(1);
+                int coin = Integer.parseInt(coinStr);
+                Real.putExtra("coin", coin);
                 startActivity(Real);
             }
         });
@@ -115,7 +114,6 @@ public class LineFragment extends Fragment {
                 DateTimePickDialogUtil dateTimePicKDialog = new DateTimePickDialogUtil(
                         getActivity(), initStartDateTime);
                 dateTimePicKDialog.dateTimePicKDialog(mTimeTextView);
-
             }
         });
         mSearchButton = (Button) view.findViewById(R.id.line_search);
@@ -126,8 +124,6 @@ public class LineFragment extends Fragment {
                 String start = mStartEditText.getText().toString();
                 String end = mEndEditText.getText().toString();
                 path = CalLineUtils.getResult(start, end);
-                //MyAdapter adapter = (MyAdapter)mListView.getAdapter();
-                //adapter.notifyDataSetChanged();
                 MyAdapter ba = new MyAdapter(getActivity());
                 mListView.setAdapter(ba);
             }

@@ -190,7 +190,6 @@ public class UserFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("onResume");
         File face = new File(getActivity().getFilesDir(), "faceimage_cropped");
         if (face.exists()) {
             faceImage.setImageBitmap(BitmapFactory.decodeFile(face.getPath()));

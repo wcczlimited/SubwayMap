@@ -125,8 +125,6 @@ public class BaiduMapUtils {
     public static ArrayList<LineItem> getRealtimeLines(ArrayList<StationItem> StList) {
         ArrayList<LineItem> res = new ArrayList<>();
         String from = StList.get(0).getmName();
-        System.out.println("getRealtimeLines " + lines.size() + " " + idToStat.size());
-
         for (int i = 1; i < StList.size(); i++) {
             String to = StList.get(i).getmName();
             for (LineItem line : lines) {

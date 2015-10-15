@@ -389,9 +389,9 @@ public class MapFragment extends Fragment{
                 for (LineItem item : lines) {
                     if (mBaiduMap.getProjection() != null) {
                         vertexBuffer = GLUtil.calPolylinePoint(mBaiduMap, mapStatus, item.getPos());
-                        if (index % 3 == 2)
+                        if (item.getIsBusy() == 2)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 207, 136, 49), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
-                        else if (index % 3 == 1)
+                        else if (item.getIsBusy() == 1)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 180, 0, 0), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
                         else
                             GLUtil.drawPolyline(gl10, Color.argb(255, 152, 191, 85), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
