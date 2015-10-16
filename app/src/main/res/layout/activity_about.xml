@@ -11,23 +11,12 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="181dp"
-        android:text="由苏打绿提供"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/viewfinder_mask"/>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginBottom="176dp"
         android:text="Version 0.5"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/viewfinder_mask"/>

@@ -160,7 +160,8 @@ public class LauncherActivity extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        wakeLock.release();
+        if (wake)
+            wakeLock.release();
     }
 
     @Override
