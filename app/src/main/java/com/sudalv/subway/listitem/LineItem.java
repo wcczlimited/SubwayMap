@@ -9,7 +9,7 @@ import java.util.List;
  * Created by SunWe on 2015/10/1.
  */
 public class LineItem {
-    public int isBusy = 0;
+    private int isBusy = 0;
     List<LatLng> pos;
     private String from;
     private String to;

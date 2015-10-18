@@ -38,6 +38,7 @@ import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.listitem.LineItem;
 import com.sudalv.subway.listitem.StationItem;
 import com.sudalv.subway.util.BaiduMapUtils;
+import com.sudalv.subway.util.CsvUtils;
 import com.sudalv.subway.util.GLUtil;
 
 import java.nio.FloatBuffer;
@@ -289,6 +290,7 @@ public class MapFragment extends Fragment{
         try {
             view = inflater.inflate(R.layout.fragment_launcher, container, false);
             initBaiduMap();
+            CsvUtils.initCsv(getResources().openRawResource(R.raw.csv_grad_ll10));
             stations = BaiduMapUtils.initStations(getResources().openRawResource(R.raw.subway));
             lines = BaiduMapUtils.initSubway(getResources().openRawResource(R.raw.lines));
             stationList = BaiduMapUtils.getStationPosList();

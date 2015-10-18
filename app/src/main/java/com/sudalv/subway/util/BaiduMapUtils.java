@@ -20,6 +20,7 @@ public class BaiduMapUtils {
     private static List<StationItem> stations = new ArrayList<StationItem>();
     private static List<LatLng> stationList = new ArrayList<LatLng>();
     private static HashMap<Integer, StationItem> idToStat = new HashMap<>();
+    private static int busyIndex = 0;
     public static List<StationItem> initStations(InputStream input){
         System.out.println("----------BaiduMapUtils initStations");
         lines = new ArrayList<LineItem>();
@@ -69,12 +70,13 @@ public class BaiduMapUtils {
 
     public static List<LineItem> initSubway(InputStream input){
         try {
+            busyIndex = 0;
             byte[] buffer = new byte[input.available()];
             input.read(buffer);
             String json = new String(buffer, "utf-8");
             JSONObject obj = new JSONObject(json);
-            addItemToList("line1", obj);
             addItemToList("line5",obj);
+            addItemToList("line1",obj);
             addItemToList("line8",obj);
             addItemToList("line4",obj);
             addItemToList("line3",obj);
@@ -86,7 +88,7 @@ public class BaiduMapUtils {
             addItemToList("line11",obj);
             addItemToList("line12",obj);
             addItemToList("line13",obj);
-            addItemToList("line16",obj);
+            addItemToList("line16", obj);
             input.close();
         }catch(Exception e){
             e.printStackTrace();
@@ -106,7 +108,17 @@ public class BaiduMapUtils {
                 double locY = temp.getDouble("locY");
                 tempItem.addPos(locX,locY);
             }
+            String busytemp = CsvUtils.getRow(busyIndex);
+            String[] busyarr = busytemp.split(",");
+            int grad = 0;
+            if(busyarr[2].equals("0.8")){
+                grad = 1;
+            }else if(busyarr[2].equals("1")){
+                grad = 2;
+            }
+            tempItem.setIsBusy(grad);
             lines.add(tempItem);
+            busyIndex++;
         }
     }
 
