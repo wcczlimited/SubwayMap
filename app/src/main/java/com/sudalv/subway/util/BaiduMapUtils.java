@@ -148,4 +148,20 @@ public class BaiduMapUtils {
         }
         return res;
     }
+
+    public static List<LineItem> updateLineBusy() {
+        int index = 0;
+        for (LineItem lineItem : lines) {
+            String str = (CsvUtils.getRow(index).split(","))[2];
+            int grad = 0;
+            if (str.equals("0.8")) {
+                grad = 1;
+            } else if (str.equals("1")) {
+                grad = 2;
+            }
+            lineItem.setIsBusy(grad);
+            index++;
+        }
+        return lines;
+    }
 }

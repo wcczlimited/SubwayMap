@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -33,6 +35,7 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.beardedhen.androidbootstrap.BootstrapButton;
 import com.sudalv.subway.R;
 import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.listitem.LineItem;
@@ -72,14 +75,13 @@ public class MapFragment extends Fragment{
     private MyLocationListenner myListener = new MyLocationListenner();
     private BaiduMapCallBack myBaiduMapCallBack= new BaiduMapCallBack();
     private MyLocationConfiguration.LocationMode mCurrentMode;
-
-    // UI相关
-    private Button mapModeButton;
     private boolean isFirstLoc = true;// 是否首次定位
-
     private List<LineItem> lines;
     private List<StationItem> stations;
 
+    // UI相关
+    private BootstrapButton mapModeButton, mPickerConfirm;
+    private NumberPicker mHourPicker, mMinutePicker;
     //openGL
     private FloatBuffer vertexBuffer;
     private List<LatLng> stationList;
@@ -154,7 +156,7 @@ public class MapFragment extends Fragment{
 
     //初始化百度Map
     private void initBaiduMap(){
-        mapModeButton = (Button) view.findViewById(R.id.mapmode);
+        mapModeButton = (BootstrapButton) view.findViewById(R.id.mapmode);
         mCurrentMode = MyLocationConfiguration.LocationMode.FOLLOWING;
         mapModeButton.setText("流量");
 
@@ -172,6 +174,7 @@ public class MapFragment extends Fragment{
                         mDrawLineFlag = false;
                         break;
                 }
+                refreshMapview();
             }
         };
         mapModeButton.setOnClickListener(btnClickListener);
@@ -193,6 +196,7 @@ public class MapFragment extends Fragment{
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();
+        mMapView.refreshDrawableState();
     }
 
     private void drawStations(){
@@ -276,6 +280,7 @@ public class MapFragment extends Fragment{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SDKInitializer.initialize(getActivity().getApplication());
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTitle = getArguments().getString(ARG_TITLE);
@@ -289,6 +294,9 @@ public class MapFragment extends Fragment{
         System.out.println("-------MapFragment onCreateView");
         try {
             view = inflater.inflate(R.layout.fragment_launcher, container, false);
+            mHourPicker = (NumberPicker) view.findViewById(R.id.hourPicker);
+            mMinutePicker = (NumberPicker) view.findViewById(R.id.minutePicker);
+            initPicker();
             initBaiduMap();
             CsvUtils.initCsv(getResources().openRawResource(R.raw.csv_grad_ll10));
             stations = BaiduMapUtils.initStations(getResources().openRawResource(R.raw.subway));
@@ -297,10 +305,40 @@ public class MapFragment extends Fragment{
             stationOverlayMap = new HashMap<>();
             drawStations();
             mBaiduMap.setOnMapDrawFrameCallback(myBaiduMapCallBack);
+            mPickerConfirm = (BootstrapButton) view.findViewById(R.id.picker_confirm);
+            mPickerConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int hour = mHourPicker.getValue();
+                    int min = mMinutePicker.getValue();
+                    int index = (hour - 5) * 4 + min / 15;
+                    int id = R.raw.csv_grad_ll01 + index;
+                    try {
+                        CsvUtils.initCsv(getResources().openRawResource(id));
+                        lines = BaiduMapUtils.updateLineBusy();
+                        refreshMapview();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
         return view;
+    }
+
+    private void refreshMapview() {
+        LatLng temp = mBaiduMap.getMapStatus().target;
+        MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(temp);
+        mBaiduMap.animateMapStatus(u);
+    }
+
+    private void initPicker() {
+        mHourPicker.setMaxValue(22);
+        mHourPicker.setMinValue(5);
+        mMinutePicker.setMaxValue(59);
+        mMinutePicker.setMinValue(0);
     }
 
     @Override
@@ -391,9 +429,9 @@ public class MapFragment extends Fragment{
                 for (LineItem item : lines) {
                     if (mBaiduMap.getProjection() != null) {
                         vertexBuffer = GLUtil.calPolylinePoint(mBaiduMap, mapStatus, item.getPos());
-                        if (item.getIsBusy() == 2)
+                        if (item.getIsBusy() == 1)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 207, 136, 49), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
-                        else if (item.getIsBusy() == 1)
+                        else if (item.getIsBusy() == 2)
                             GLUtil.drawPolyline(gl10, Color.argb(255, 180, 0, 0), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);
                         else
                             GLUtil.drawPolyline(gl10, Color.argb(255, 152, 191, 85), vertexBuffer, lineWidth, item.getPos().size(), mapStatus);

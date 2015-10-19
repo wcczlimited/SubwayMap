@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,9 @@ import android.widget.TextView;
 import com.sudalv.subway.R;
 import com.sudalv.subway.activity.LauncherActivity;
 import com.sudalv.subway.activity.RealtimeActivity;
+import com.sudalv.subway.listitem.LineItem;
+import com.sudalv.subway.listitem.StationItem;
+import com.sudalv.subway.util.BaiduMapUtils;
 import com.sudalv.subway.util.CalLineUtils;
 import com.sudalv.subway.util.DateTimePickDialogUtil;
 
@@ -193,6 +197,39 @@ public class LineFragment extends Fragment {
             lineView.setText(str);
             TextView timeView = (TextView) convertView.findViewById(R.id.line_item_time);
             timeView.setText("时间未知" + " | " + path.get(position).size() + "站 | 步行未知");
+            List<String> selecedPath = path.get(position);
+            ArrayList<StationItem> stations = BaiduMapUtils.getRealtimeStations(new ArrayList<String>(selecedPath));
+            ArrayList<LineItem> lines = BaiduMapUtils.getRealtimeLines(stations);
+            int coin = 0;
+            int grade0 = 0, grade1 = 0, grade2 = 0;
+            String busy = "一般";
+            for (LineItem item : lines) {
+                if (item.getIsBusy() == 0) {
+                    coin += 6;
+                    grade0++;
+                } else if (item.getIsBusy() == 1) {
+                    coin += 4;
+                    grade1++;
+                } else {
+                    grade2++;
+                }
+            }
+            TextView busyText = (TextView) convertView.findViewById(R.id.line_item_status);
+            if (grade0 > grade1) {
+                if (grade0 > grade2) {
+                    busy = "一般";
+                    busyText.setTextColor(Color.argb(255, 207, 136, 49));
+                }
+            }
+            if (grade2 > grade1) {
+                if (grade2 > grade0) {
+                    busy = "拥堵";
+                    busyText.setTextColor(Color.argb(255, 180, 0, 0));
+                }
+            }
+            TextView coinText = (TextView) convertView.findViewById(R.id.line_item_coin);
+            coinText.setText("Q" + coin);
+            busyText.setText(busy);
             return convertView;
         }
     }
