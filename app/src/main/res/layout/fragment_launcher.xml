@@ -85,4 +85,13 @@
         android:layout_toEndOf="@+id/minutePicker"
         android:text="分"
         android:textSize="22dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView3"
+        android:layout_below="@+id/mapmode"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/tuli" />
 </RelativeLayout>
