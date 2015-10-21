@@ -22,6 +22,7 @@ import com.sudalv.subway.R;
 import com.sudalv.subway.fragment.LineFragment;
 import com.sudalv.subway.fragment.MapFragment;
 import com.sudalv.subway.fragment.NavigationDrawerFragment;
+import com.sudalv.subway.fragment.NearbyFragment;
 import com.sudalv.subway.fragment.SettingFragment;
 import com.sudalv.subway.fragment.UserFragment;
 import com.sudalv.subway.util.FileUtils;
@@ -93,6 +94,9 @@ public class LauncherActivity extends Activity
             ft.replace(R.id.container, currentFragment, title);
         } else if (title.equals("设置")) {
             currentFragment = SettingFragment.newInstance(title);
+            ft.replace(R.id.container, currentFragment, title);
+        } else if (title.equals("周边")) {
+            currentFragment = NearbyFragment.newInstance(title);
             ft.replace(R.id.container, currentFragment, title);
         }
         if(lastFragment != null) {
