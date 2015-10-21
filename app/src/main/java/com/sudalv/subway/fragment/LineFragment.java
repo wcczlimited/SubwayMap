@@ -202,7 +202,7 @@ public class LineFragment extends Fragment {
             ArrayList<LineItem> lines = BaiduMapUtils.getRealtimeLines(stations);
             int coin = 0;
             int grade0 = 0, grade1 = 0, grade2 = 0;
-            String busy = "一般";
+            String busy = "畅通";
             for (LineItem item : lines) {
                 if (item.getIsBusy() == 0) {
                     coin += 6;
@@ -215,8 +215,8 @@ public class LineFragment extends Fragment {
                 }
             }
             TextView busyText = (TextView) convertView.findViewById(R.id.line_item_status);
-            if (grade0 > grade1) {
-                if (grade0 > grade2) {
+            if (grade1 > grade0) {
+                if (grade1 > grade2) {
                     busy = "一般";
                     busyText.setTextColor(Color.argb(255, 207, 136, 49));
                 }

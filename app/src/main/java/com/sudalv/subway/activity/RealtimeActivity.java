@@ -300,7 +300,7 @@ public class RealtimeActivity extends Activity {
             LatLng lastpos = stations.get(0).getmPos();
             double distance = getDistanceFromTwoPoints(lastpos,
                     new LatLng(location.getLatitude(), location.getLongitude()));
-            if (distance < 3000) {
+            if (distance < 1000) {
                 StationItem temp = stations.remove(0);
                 Toast.makeText(RealtimeActivity.this, "你已经经过了" + temp.getmName(), Toast.LENGTH_LONG).show();
             }

@@ -95,7 +95,7 @@ public class LauncherActivity extends Activity
         } else if (title.equals("设置")) {
             currentFragment = SettingFragment.newInstance(title);
             ft.replace(R.id.container, currentFragment, title);
-        } else if (title.equals("nearby")) {
+        } else if (title.equals("周边")) {
             currentFragment = NearbyFragment.newInstance(title);
             ft.replace(R.id.container, currentFragment, title);
         }
