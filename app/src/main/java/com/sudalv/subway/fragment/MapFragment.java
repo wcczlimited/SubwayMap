@@ -304,9 +304,9 @@ public class MapFragment extends Fragment{
             String curTime = curDate.split(" ")[1];
             int hour = Integer.parseInt(curTime.split(":")[0]);
             int min = Integer.parseInt(curTime.split(":")[1]);
-            int id = (hour - 5) * 4 + min / 15 + R.raw.csv_grad_ll01;
+            int id = (hour - 5) * 4 + min / 15 + R.raw.csv_grad_ll_01;
             if (hour >= 23 || hour < 5)
-                id = R.raw.csv_grad_ll01;
+                id = R.raw.csv_grad_ll_01;
             CsvUtils.initCsv(getResources().openRawResource(id));
             stations = BaiduMapUtils.initStations(getResources().openRawResource(R.raw.subway));
             lines = BaiduMapUtils.initSubway(getResources().openRawResource(R.raw.lines));
@@ -321,7 +321,7 @@ public class MapFragment extends Fragment{
                     int hour = mHourPicker.getValue();
                     int min = mMinutePicker.getValue();
                     int index = (hour - 5) * 4 + min / 15;
-                    int id = R.raw.csv_grad_ll01 + index;
+                    int id = R.raw.csv_grad_ll_01 + index;
                     try {
                         CsvUtils.initCsv(getResources().openRawResource(id));
                         lines = BaiduMapUtils.updateLineBusy();
