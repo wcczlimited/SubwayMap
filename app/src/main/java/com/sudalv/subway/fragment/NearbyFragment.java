@@ -24,38 +24,23 @@ public class NearbyFragment extends Fragment {
     private String mTitle;
     private View view;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param title
-     * @return A new instance of fragment NearbyFragment.
-     */
-    public static NearbyFragment newInstance(String title) {
-        NearbyFragment fragment = new NearbyFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_TITLE, title);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param title
-     * @return A new instance of fragment NearbyFragment.
-     */
-    public static NearbyFragment newInstance(String title) {
-        NearbyFragment fragment = new NearbyFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_TITLE, title);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     public NearbyFragment() {
         // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param title
+     * @return A new instance of fragment NearbyFragment.
+     */
+    public static NearbyFragment newInstance(String title) {
+        NearbyFragment fragment = new NearbyFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_TITLE, title);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
