@@ -45,7 +45,9 @@ import com.sudalv.subway.util.CsvUtils;
 import com.sudalv.subway.util.GLUtil;
 
 import java.nio.FloatBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -291,14 +293,21 @@ public class MapFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        System.out.println("-------MapFragment onCreateView");
         try {
             view = inflater.inflate(R.layout.fragment_launcher, container, false);
             mHourPicker = (NumberPicker) view.findViewById(R.id.hourPicker);
             mMinutePicker = (NumberPicker) view.findViewById(R.id.minutePicker);
             initPicker();
             initBaiduMap();
-            CsvUtils.initCsv(getResources().openRawResource(R.raw.csv_grad_ll10));
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");//设置日期格式
+            String curDate = df.format(new Date());// new Date()为获取当前系统时间
+            String curTime = curDate.split(" ")[1];
+            int hour = Integer.parseInt(curTime.split(":")[0]);
+            int min = Integer.parseInt(curTime.split(":")[1]);
+            int id = (hour - 5) * 4 + min / 15 + R.raw.csv_grad_ll01;
+            if (hour >= 23 || hour < 5)
+                id = R.raw.csv_grad_ll01;
+            CsvUtils.initCsv(getResources().openRawResource(id));
             stations = BaiduMapUtils.initStations(getResources().openRawResource(R.raw.subway));
             lines = BaiduMapUtils.initSubway(getResources().openRawResource(R.raw.lines));
             stationList = BaiduMapUtils.getStationPosList();
